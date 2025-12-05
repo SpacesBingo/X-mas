@@ -36,7 +36,7 @@
 
     .form-block { margin-top: 18px; margin-bottom: 4px; }
     label { display: block; font-size: 13px; margin-bottom: 6px; }
-    input, select {
+    input {
         width: 100%;
         padding: 10px 12px;
         border-radius: 8px;
@@ -94,39 +94,6 @@
         user-select: none;
     }
 
-    /* host */
-    .host-block {
-        margin-top: 14px;
-        padding-top: 10px;
-        border-top: 1px dashed rgba(255,255,255,0.25);
-        font-size: 12px;
-    }
-    .host-title {
-        font-size: 13px;
-        font-weight: 600;
-        margin-bottom: 6px;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-    }
-    .host-title span {
-        font-size: 11px;
-        opacity: 0.7;
-        font-weight: 400;
-    }
-    .host-row { display: flex; flex-direction: column; gap: 6px; margin-top: 6px; }
-    .host-row input, .host-row select { font-size: 12px; padding: 8px 10px; }
-    .host-buttons { margin-top: 6px; }
-    .host-buttons button {
-        width: 100%;
-        font-size: 12px;
-        padding: 8px 10px;
-    }
-    .host-result { margin-top: 6px; min-height: 18px; font-size: 12px; }
-    .ok { color: #4ade80; }
-    .nok { color: #fca5a5; }
-
-    /* kaart + host eerst verborgen */
     #card-section { display: none; }
 
     @media (max-width: 480px) {
@@ -151,11 +118,11 @@
             <button onclick="generate()">Geef mij mijn bingokaart</button>
         </div>
         <p class="hint">
-            Dezelfde @handle = altijd precies dezelfde 3 rondes. Handig voor controle bij bingo.
+            Dezelfde @handle = altijd precies dezelfde 3 rondes. Bewaar je kaart of maak een screenshot.
         </p>
     </div>
 
-    <!-- kaart + host -->
+    <!-- kaart -->
     <div id="card-section">
         <div class="divider"></div>
 
@@ -173,32 +140,11 @@
             <div class="round-title">Ronde 3</div>
             <div id="round3" class="round-grid"></div>
         </div>
-
-        <!-- hostcontrole: check bingo op 1/2/3 lijnen -->
-        <div class="host-block">
-            <div class="host-title">
-                Host bingo-controle 🔎
-                <span>(speler DM’t @handle + ronde + jij voert getrokken nummers in)</span>
-            </div>
-            <div class="host-row">
-                <input id="host-handle" placeholder="@handle van speler met bingo">
-                <select id="host-round">
-                    <option value="1">Ronde 1</option>
-                    <option value="2">Ronde 2</option>
-                    <option value="3">Ronde 3</option>
-                </select>
-                <input id="host-draws" placeholder="Getrokken nummers, bijv: 2 11 24 43 53 4 29 44 61 63 ...">
-            </div>
-            <div class="host-buttons">
-                <button onclick="checkBingo()">Controleer bingo</button>
-            </div>
-            <div id="host-result" class="host-result"></div>
-        </div>
     </div>
 </div>
 
 <script>
-// ---------- lichte, deterministische RNG (geen vastlopers) ----------
+// zelfde RNG als op hostpagina (moet identiek zijn!)
 function hashString(str) {
     let h = 0;
     for (let i = 0; i < str.length; i++) {
@@ -216,7 +162,6 @@ function makeRng(seed) {
     };
 }
 
-// 1 ronde = 15 unieke nummers 1–75 uit handle + ronde
 function getRoundNumbers(handle, roundIndex) {
     const base = handle.trim().toLowerCase() + "#" + roundIndex;
     const rng = makeRng(hashString(base));
@@ -228,7 +173,6 @@ function getRoundNumbers(handle, roundIndex) {
     return nums;
 }
 
-// spelerkaart tekenen
 function generate() {
     const name = document.getElementById("username").value.trim();
     if (!name) {
@@ -248,55 +192,6 @@ function generate() {
             cell.textContent = numbers[i];
             container.appendChild(cell);
         }
-    }
-}
-
-// host: bingo-controle (horizontale lijnen op 3×5 kaart)
-function checkBingo() {
-    const handle = document.getElementById("host-handle").value.trim();
-    const round = parseInt(document.getElementById("host-round").value, 10);
-    const drawsRaw = document.getElementById("host-draws").value.trim();
-    const resultEl = document.getElementById("host-result");
-
-    if (!handle || !drawsRaw) {
-        resultEl.innerHTML = '<span class="nok">Vul zowel @handle als de getrokken nummers in.</span>';
-        return;
-    }
-
-    const drawnSet = new Set();
-    drawsRaw.split(/[\s,;,]+/).forEach(part => {
-        const n = parseInt(part, 10);
-        if (!isNaN(n)) drawnSet.add(n);
-    });
-
-    if (drawnSet.size === 0) {
-        resultEl.innerHTML = '<span class="nok">Ik zie geen geldige nummers in de invoer.</span>';
-        return;
-    }
-
-    const cardNums = getRoundNumbers(handle, round);
-
-    // indices van rijen op 3×5 kaart
-    const rows = [
-        [0, 1, 2, 3, 4],
-        [5, 6, 7, 8, 9],
-        [10, 11, 12, 13, 14]
-    ];
-
-    let lineCount = 0;
-    rows.forEach(row => {
-        const full = row.every(idx => drawnSet.has(cardNums[idx]));
-        if (full) lineCount++;
-    });
-
-    if (lineCount === 0) {
-        resultEl.innerHTML = '<span class="nok">❌ Geen complete rij voor ' + handle + ' in ronde ' + round + '.</span>';
-    } else if (lineCount === 1) {
-        resultEl.innerHTML = '<span class="ok">✅ Geldige bingo (1 lijn) voor ' + handle + ' in ronde ' + round + '.</span>';
-    } else if (lineCount === 2) {
-        resultEl.innerHTML = '<span class="ok">✅ Geldige bingo (2 lijnen) voor ' + handle + ' in ronde ' + round + '.</span>';
-    } else {
-        resultEl.innerHTML = '<span class="ok">✅ VOLLE KAART! (3 lijnen) voor ' + handle + ' in ronde ' + round + '.</span>';
     }
 }
 </script>
