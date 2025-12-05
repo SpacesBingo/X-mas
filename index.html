@@ -5,6 +5,7 @@
 <title>Keek op de Week presenteert: X-Mas Bingo 🎄</title>
 <style>
     * { box-sizing: border-box; }
+
     body {
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
         margin: 0;
@@ -12,45 +13,97 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        background: radial-gradient(circle at top, #032638 0, #020c16 45%, #000000 100%);
+        /* Kerstnacht achtergrond met lichte gloed en "sneeuw" */
+        background:
+            radial-gradient(circle at top, rgba(255,255,255,0.12) 0, transparent 45%),
+            radial-gradient(circle at bottom, #02111b 0, #000000 60%);
         color: #fff;
-        padding: 20px;
+        padding: 10px;
     }
+
     .panel {
-        background: #052332;
-        border-radius: 18px;
+        position: relative;
+        background: rgba(5, 35, 50, 0.96);
+        border-radius: 22px;
         border: 2px solid #ff3b3b;
-        padding: 24px 22px 26px;
+        padding: 22px 20px 24px;
         max-width: 640px;
         width: 100%;
-        box-shadow: 0 18px 45px rgba(0,0,0,0.6);
+        box-shadow:
+            0 18px 45px rgba(0,0,0,0.8),
+            0 0 18px rgba(255, 255, 255, 0.06);
         text-align: left;
+        overflow: hidden;
     }
-    .panel-header { text-align: center; margin-bottom: 18px; }
+
+    /* subtiele “lichtjes” bovenin */
+    .panel::before {
+        content: "";
+        position: absolute;
+        top: -60px;
+        left: -40px;
+        right: -40px;
+        height: 120px;
+        background:
+            radial-gradient(circle at 10% 30%, rgba(255,255,255,0.15) 0, transparent 55%),
+            radial-gradient(circle at 80% 20%, rgba(255,255,255,0.12) 0, transparent 55%);
+        opacity: 0.7;
+        pointer-events: none;
+    }
+
+    .panel-header {
+        text-align: center;
+        margin-bottom: 18px;
+        position: relative;
+        z-index: 1;
+    }
+
     .panel h1 {
         margin: 0 0 6px;
-        font-size: 26px;
+        font-size: 24px;
         letter-spacing: 0.03em;
     }
-    .subtitle { margin: 0; font-size: 14px; opacity: 0.85; }
 
-    .form-block { margin-top: 18px; margin-bottom: 4px; }
-    label { display: block; font-size: 13px; margin-bottom: 6px; }
+    .subtitle {
+        margin: 0;
+        font-size: 13px;
+        opacity: 0.9;
+    }
+
+    .form-block {
+        margin-top: 18px;
+        margin-bottom: 4px;
+        position: relative;
+        z-index: 1;
+    }
+
+    label {
+        display: block;
+        font-size: 13px;
+        margin-bottom: 6px;
+    }
+
     input {
         width: 100%;
         padding: 10px 12px;
-        border-radius: 8px;
-        border: 1px solid rgba(255,255,255,0.2);
+        border-radius: 10px;
+        border: 1px solid rgba(255,255,255,0.25);
         background: #02141f;
         color: #fff;
         font-size: 14px;
         outline: none;
     }
-    input::placeholder { color: rgba(255,255,255,0.4); }
 
-    .button-wrap { margin-top: 10px; }
+    input::placeholder {
+        color: rgba(255,255,255,0.4);
+    }
+
+    .button-wrap {
+        margin-top: 10px;
+    }
+
     button {
-        padding: 10px 14px;
+        padding: 10px 16px;
         border-radius: 999px;
         border: none;
         font-size: 14px;
@@ -58,29 +111,88 @@
         color: #fff;
         cursor: pointer;
         background-image: linear-gradient(90deg, #ff3b3b, #ff9100);
-        box-shadow: 0 8px 18px rgba(0,0,0,0.5);
+        box-shadow: 0 8px 18px rgba(0,0,0,0.7);
+        transition: transform 0.08s ease, box-shadow 0.08s ease, filter 0.08s ease;
     }
-    button:hover { filter: brightness(1.05); }
 
-    .hint { margin-top: 6px; font-size: 11px; opacity: 0.75; }
+    button:hover {
+        filter: brightness(1.05);
+        transform: translateY(-1px);
+        box-shadow: 0 10px 22px rgba(0,0,0,0.85);
+    }
+
+    .hint {
+        margin-top: 6px;
+        font-size: 11px;
+        opacity: 0.78;
+    }
 
     .divider {
         height: 1px;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
-        margin: 16px 0 10px;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent);
+        margin: 16px 0 12px;
     }
 
-    .round-wrapper { margin-bottom: 10px; }
+    /* kaartkop */
+    #card-info {
+        text-align: center;
+        margin-bottom: 10px;
+    }
+
+    #card-owner {
+        font-size: 15px;
+        font-weight: 600;
+        margin-bottom: 4px;
+    }
+
+    #card-info small {
+        font-size: 12px;
+        opacity: 0.85;
+        display: block;
+    }
+
+    .round-wrapper {
+        margin-bottom: 12px;
+        padding: 10px 10px 12px;
+        border-radius: 14px;
+        border: 1px solid rgba(255,255,255,0.15);
+        background: rgba(2,18,27,0.9);
+    }
+
+    /* verschillende kerstkleuren per ronde */
+    .round1 {
+        border-color: rgba(239, 68, 68, 0.9);
+        box-shadow: 0 0 14px rgba(239,68,68,0.35);
+    }
+    .round2 {
+        border-color: rgba(34, 197, 94, 0.9);
+        box-shadow: 0 0 14px rgba(34,197,94,0.35);
+    }
+    .round3 {
+        border-color: rgba(250, 204, 21, 0.9);
+        box-shadow: 0 0 14px rgba(250,204,21,0.35);
+    }
+
     .round-title {
-        margin: 6px 0 4px;
+        margin: 0 0 6px;
         font-size: 13px;
         font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
     }
+
+    .round-badge {
+        font-size: 11px;
+        opacity: 0.85;
+    }
+
     .round-grid {
         display: grid;
         grid-template-columns: repeat(5, 1fr);
         gap: 4px;
     }
+
     .cell {
         aspect-ratio: 1 / 1;
         border-radius: 10px;
@@ -89,19 +201,39 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 15px;
-        box-shadow: 0 3px 8px rgba(0,0,0,0.4);
+        font-size: 16px;
+        box-shadow: 0 3px 8px rgba(0,0,0,0.5);
         user-select: none;
     }
 
-    /* Kaart + kop volledig verborgen tot na klik */
+    /* kaart standaard verborgen */
     #card-section {
         display: none;
+        position: relative;
+        z-index: 1;
     }
 
+    /* mobiel tweaks */
     @media (max-width: 480px) {
-        .panel { padding: 18px 14px 20px; }
-        .panel h1 { font-size: 22px; }
+        body {
+            padding: 6px;
+        }
+        .panel {
+            padding: 18px 12px 20px;
+            border-radius: 18px;
+        }
+        .panel h1 {
+            font-size: 20px;
+        }
+        .subtitle {
+            font-size: 12px;
+        }
+        .round-grid {
+            gap: 3px;
+        }
+        .cell {
+            font-size: 15px;
+        }
     }
 </style>
 </head>
@@ -129,36 +261,42 @@
     <div id="card-section">
         <div class="divider"></div>
 
-        <!-- kaartkop -->
-        <div id="card-info" style="text-align:center; margin-bottom:10px;">
-            <div id="card-owner" style="font-size:15px; font-weight:600; margin-bottom:4px;">
-                Kaart voor: @handle
-            </div>
-            <div style="font-size:12px; opacity:0.8;">
+        <div id="card-info">
+            <div id="card-owner">Kaart voor: @handle</div>
+            <small>
                 Deze kaart is alleen geldig voor deze X-handle.<br>
                 Gebruik dezelfde handle bij het claimen van bingo.
-            </div>
+            </small>
         </div>
 
-        <div class="round-wrapper">
-            <div class="round-title">Ronde 1</div>
+        <div class="round-wrapper round1">
+            <div class="round-title">
+                <span>Ronde 1</span>
+                <span class="round-badge">🔥 Eerste ronde</span>
+            </div>
             <div id="round1" class="round-grid"></div>
         </div>
 
-        <div class="round-wrapper">
-            <div class="round-title">Ronde 2</div>
+        <div class="round-wrapper round2">
+            <div class="round-title">
+                <span>Ronde 2</span>
+                <span class="round-badge">🎄 Mid-game</span>
+            </div>
             <div id="round2" class="round-grid"></div>
         </div>
 
-        <div class="round-wrapper">
-            <div class="round-title">Ronde 3</div>
+        <div class="round-wrapper round3">
+            <div class="round-title">
+                <span>Ronde 3</span>
+                <span class="round-badge">⭐ Finale ronde</span>
+            </div>
             <div id="round3" class="round-grid"></div>
         </div>
     </div>
 </div>
 
 <script>
-// ---------- RNG / kaartgenerator (moet overeenkomen met host.html) ----------
+/* ---------- RNG / kaartgenerator (moet overeenkomen met host.html) ---------- */
 function hashString(str) {
     let h = 0;
     for (let i = 0; i < str.length; i++) {
@@ -178,25 +316,20 @@ function makeRng(seed) {
 
 // 1 ronde = 15 unieke nummers 1–75, bepaald door handle + ronde
 function getRoundNumbers(handle, roundIndex) {
-    // spaties eraf, @ weghalen, lowercase
     let cleaned = handle.trim();
     if (cleaned.startsWith("@")) {
         cleaned = cleaned.slice(1);
     }
     cleaned = cleaned.toLowerCase();
 
-    // één basis-seed per handle
     const baseSeed = hashString(cleaned);
     const rng = makeRng(baseSeed);
 
-    // per ronde een stuk van de reeks overslaan,
-    // zodat ronde 1, 2 en 3 echt andere patronen hebben
-    const SKIP_PER_ROUND = 30; // mag ook 40/50 zijn, maar 30 is zat
+    const SKIP_PER_ROUND = 30;
     for (let i = 0; i < (roundIndex - 1) * SKIP_PER_ROUND; i++) {
         rng();
     }
 
-    // daarna 15 unieke nummers 1–75 pakken
     const nums = [];
     while (nums.length < 15) {
         const n = Math.floor(rng() * 75) + 1;
@@ -205,26 +338,22 @@ function getRoundNumbers(handle, roundIndex) {
     return nums;
 }
 
-
 // spelerkaart tekenen
 function generate() {
     let name = document.getElementById("username").value.trim();
 
-// leeg?
-if (!name) {
-    alert("Vul je Twitter @handle in!");
-    return;
-}
+    // leeg?
+    if (!name) {
+        alert("Vul je Twitter @handle in!");
+        return;
+    }
+    // verplicht met @ beginnen
+    if (!name.startsWith("@")) {
+        alert("Je handle moet beginnen met @. Voorbeeld: @jouwnaam");
+        return;
+    }
 
-// controleer of handle begint met @
-if (!name.startsWith("@")) {
-    alert("Je handle moet beginnen met @. Voorbeeld: @jouwnaam");
-    return;
-}
-
-
-    // zorg dat er altijd een @ in de weergave staat
-    let displayHandle = name.startsWith("@") ? name : "@" + name;
+    const displayHandle = name;
 
     document.getElementById("card-section").style.display = "block";
     document.getElementById("card-owner").textContent = "Kaart voor: " + displayHandle;
