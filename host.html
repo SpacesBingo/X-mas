@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>KEEK Kerst Bingo – Host controle</title>
+<style>
+    * { box-sizing: border-box; }
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: radial-gradient(circle at top, #032638 0, #020c16 45%, #000000 100%);
+        color: #fff;
+        padding: 20px;
+    }
+    .panel {
+        background: #052332;
+        border-radius: 18px;
+        border: 2px solid #ff3b3b;
+        padding: 24px 22px 26px;
+        max-width: 640px;
+        width: 100%;
+        box-shadow: 0 18px 45px rgba(0,0,0,0.6);
+        text-align: left;
+    }
+    .panel-header { text-align: center; margin-bottom: 18px; }
+    .panel h1 { margin: 0 0 6px; font-size: 24px; letter-spacing: 0.03em; }
+    .subtitle { margin: 0; font-size: 13px; opacity: 0.85; }
+
+    label { display: block; font-size: 13px; margin-bottom: 4px; margin-top: 10px; }
+    input, select {
+        width: 100%;
+        padding: 8px 10px;
+        border-radius: 8px;
+        border: 1px solid rgba(255,255,255,0.2);
+        background: #02141f;
+        color: #fff;
+        font-size: 13px;
+        outline: none;
+    }
+    input::placeholder { color: rgba(255,255,255,0.4); }
+
+    button {
+        margin-top: 10px;
+        padding: 9px 14px;
+        border-radius: 999px;
+        border: none;
+        font-size: 13px;
+        font-weight: 600;
+        color: #fff;
+        cursor: pointer;
+        background-image: linear-gradient(90deg, #ff3b3b, #ff9100);
+        box-shadow: 0 8px 18px rgba(0,0,0,0.5);
+    }
+
+    button:hover { filter: brightness(1.05); }
+
+    .card-wrapper { margin-top: 18px; }
+    .round-title { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+    .round-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 4px;
+    }
+    .cell {
+        aspect-ratio: 1 / 1;
+        border-radius: 10px;
+        border: 1px solid rgba(255,255,255,0.3);
+        background: #041824;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 15px;
+        box-shadow: 0 3px 8px rgba(0,0,0,0.4);
+        user-select: none;
+    }
+
+    .host-result { margin-top: 10px; font-size: 13px; min-height: 20px; }
+    .ok { color: #4ade80; }
+    .nok { color: #fca5a5; }
+</style>
+</head>
+<body>
+
+<div class="panel">
+    <div class="panel-header">
+        <h1>Host controle – KEEK Kerst Bingo 🎄</h1>
+        <p class="subtitle">
+            Vul @handle, ronde en getrokken nummers in om een bingo te controleren.
+        </p>
+    </div>
+
+    <label for="host-handle">@handle van speler</label>
+    <input id="host-handle" placeholder="@spelernaam">
+
+    <label for="host-round">Ronde</label>
+    <select id="host-round">
+        <option value="1">Ronde 1</option>
+        <option value="2">Ronde 2</option>
+        <option value="3">Ronde 3</option>
+    </select>
+
+    <label for="host-draws">Getrokken nummers (tot en met het bingonummer)</label>
+    <input id="host-draws" placeholder="Bijv: 2 11 24 43 53 4 29 44 61 63 ...">
+
+    <button onclick="checkBingo()">Controleer bingo</button>
+
+    <div class="card-wrapper">
+        <div class="round-title">Kaart van speler (geselecteerde ronde)</div>
+        <div id="round-host" class="round-grid"></div>
+    </div>
+
+    <div id="host-result" class="host-result"></div>
+</div>
+
+<script>
+// zelfde RNG als op index.html – MOET identiek blijven!
+function hashString(str) {
+    let h = 0;
+    for (let i = 0; i < str.length; i++) {
+        h = (h * 31 + str.charCodeAt(i)) | 0;
+    }
+    return Math.abs(h) || 1;
+}
+
+function makeRng(seed) {
+    let s = seed % 2147483647;
+    if (s <= 0) s += 2147483646;
+    return function () {
+        s = (s * 16807) % 2147483647;
+        return (s - 1) / 2147483646;
+    };
+}
+
+function getRoundNumbers(handle, roundIndex) {
+    const base = handle.trim().toLowerCase() + "#" + roundIndex;
+    const rng = makeRng(hashString(base));
+    const nums = [];
+    while (nums.length < 15) {
+        const n = Math.floor(rng() * 75) + 1;
+        if (!nums.includes(n)) nums.push(n);
+    }
+    return nums;
+}
+
+function drawHostCard(numbers) {
+    const container = document.getElementById("round-host");
+    container.innerHTML = "";
+    numbers.forEach(n => {
+        const cell = document.createElement("div");
+        cell.className = "cell";
+        cell.textContent = n;
+        container.appendChild(cell);
+    });
+}
+
+function checkBingo() {
+    const handle = document.getElementById("host-handle").value.trim();
+    const round = parseInt(document.getElementById("host-round").value, 10);
+    const drawsRaw = document.getElementById("host-draws").value.trim();
+    const resultEl = document.getElementById("host-result");
+
+    if (!handle || !drawsRaw) {
+        resultEl.innerHTML = '<span class="nok">Vul zowel @handle als getrokken nummers in.</span>';
+        return;
+    }
+
+    const drawnSet = new Set();
+    drawsRaw.split(/[\s,;]+/).forEach(part => {
+        const n = parseInt(part, 10);
+        if (!isNaN(n)) drawnSet.add(n);
+    });
+
+    if (drawnSet.size === 0) {
+        resultEl.innerHTML = '<span class="nok">Ik zie geen geldige nummers in de invoer.</span>';
+        return;
+    }
+
+    const cardNums = getRoundNumbers(handle, round);
+    drawHostCard(cardNums); // laat altijd de kaart zien
+
+    const rows = [
+        [0,1,2,3,4],
+        [5,6,7,8,9],
+        [10,11,12,13,14]
+    ];
+
+    let lineCount = 0;
+    rows.forEach(row => {
+        const full = row.every(idx => drawnSet.has(cardNums[idx]));
+        if (full) lineCount++;
+    });
+
+    if (lineCount === 0) {
+        resultEl.innerHTML = '<span class="nok">❌ Geen complete rij voor ' + handle + ' in ronde ' + round + '.</span>';
+    } else if (lineCount === 1) {
+        resultEl.innerHTML = '<span class="ok">✅ Geldige bingo (1 lijn) voor ' + handle + ' in ronde ' + round + '.</span>';
+    } else if (lineCount === 2) {
+        resultEl.innerHTML = '<span class="ok">✅ Geldige bingo (2 lijnen) voor ' + handle + ' in ronde ' + round + '.</span>';
+    } else {
+        resultEl.innerHTML = '<span class="ok">✅ VOLLE KAART! (3 lijnen) voor ' + handle + ' in ronde ' + round + '.</span>';
+    }
+}
+</script>
+
+</body>
+</html>
