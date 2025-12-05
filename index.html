@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title> X-mas Bingo – 3 rondes</title>
+<title>Keek op de Week presenteert: X-Mas Bingo 🎄</title>
 <style>
     * { box-sizing: border-box; }
     body {
@@ -94,7 +94,10 @@
         user-select: none;
     }
 
-    #card-section { display: none; }
+    /* Kaart + kop volledig verborgen tot na klik */
+    #card-section {
+        display: none;
+    }
 
     @media (max-width: 480px) {
         .panel { padding: 18px 14px 20px; }
@@ -106,7 +109,7 @@
 
 <div class="panel">
     <div class="panel-header">
-        <h1> Keek op de Week presenteert: X-Mas Bingo 🎄</h1>
+        <h1>Keek op de Week presenteert: X-Mas Bingo 🎄</h1>
         <p class="subtitle">1 link · 1 kaart per @handle · 3 rondes</p>
     </div>
 
@@ -122,21 +125,25 @@
         </p>
     </div>
 
-    <!-- kaart -->
+    <!-- kaart: pas zichtbaar na generate() -->
     <div id="card-section">
-    <div class="divider"></div>
+        <div class="divider"></div>
 
-    <!-- kaartkop -->
-    <div id="card-info" style="text-align:center; margin-bottom:10px;">
-        <div id="card-owner" style="font-size:15px; font-weight:600; margin-bottom:4px;">
-            Kaart voor: @handle
+        <!-- kaartkop -->
+        <div id="card-info" style="text-align:center; margin-bottom:10px;">
+            <div id="card-owner" style="font-size:15px; font-weight:600; margin-bottom:4px;">
+                Kaart voor: @handle
+            </div>
+            <div style="font-size:12px; opacity:0.8;">
+                Deze kaart is alleen geldig voor deze X-handle.<br>
+                Gebruik dezelfde handle bij het claimen van bingo.
+            </div>
         </div>
-        <div style="font-size:12px; opacity:0.8;">
-            Deze kaart is alleen geldig voor deze X-handle.<br>
-            Gebruik dezelfde handle bij het claimen van bingo.
-        </div>
-    </div>
 
+        <div class="round-wrapper">
+            <div class="round-title">Ronde 1</div>
+            <div id="round1" class="round-grid"></div>
+        </div>
 
         <div class="round-wrapper">
             <div class="round-title">Ronde 2</div>
@@ -151,7 +158,7 @@
 </div>
 
 <script>
-// zelfde RNG als op hostpagina (moet identiek zijn!)
+// ---------- RNG / kaartgenerator (moet overeenkomen met host.html) ----------
 function hashString(str) {
     let h = 0;
     for (let i = 0; i < str.length; i++) {
@@ -169,8 +176,15 @@ function makeRng(seed) {
     };
 }
 
+// 1 ronde = 15 unieke nummers 1–75, bepaald door handle + ronde
 function getRoundNumbers(handle, roundIndex) {
-    const base = handle.trim().toLowerCase() + "#" + roundIndex;
+    let cleaned = handle.trim();
+    if (cleaned.startsWith("@")) {
+        cleaned = cleaned.slice(1);
+    }
+    cleaned = cleaned.toLowerCase();
+
+    const base = cleaned + "#" + roundIndex;
     const rng = makeRng(hashString(base));
     const nums = [];
     while (nums.length < 15) {
@@ -180,14 +194,19 @@ function getRoundNumbers(handle, roundIndex) {
     return nums;
 }
 
+// spelerkaart tekenen
 function generate() {
-    const name = document.getElementById("username").value.trim();
+    let name = document.getElementById("username").value.trim();
     if (!name) {
         alert("Vul je Twitter @handle in!");
         return;
     }
 
+    // zorg dat er altijd een @ in de weergave staat
+    let displayHandle = name.startsWith("@") ? name : "@" + name;
+
     document.getElementById("card-section").style.display = "block";
+    document.getElementById("card-owner").textContent = "Kaart voor: " + displayHandle;
 
     for (let r = 1; r <= 3; r++) {
         const numbers = getRoundNumbers(name, r);
