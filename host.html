@@ -136,8 +136,25 @@ function makeRng(seed) {
 }
 
 function getRoundNumbers(handle, roundIndex) {
-    const base = handle.trim().toLowerCase() + "#" + roundIndex;
-    const rng = makeRng(hashString(base));
+    // spaties eraf, @ weghalen, lowercase
+    let cleaned = handle.trim();
+    if (cleaned.startsWith("@")) {
+        cleaned = cleaned.slice(1);
+    }
+    cleaned = cleaned.toLowerCase();
+
+    // één basis-seed per handle
+    const baseSeed = hashString(cleaned);
+    const rng = makeRng(baseSeed);
+
+    // per ronde een stuk van de reeks overslaan,
+    // zodat ronde 1, 2 en 3 echt andere patronen hebben
+    const SKIP_PER_ROUND = 30; // mag ook 40/50 zijn, maar 30 is zat
+    for (let i = 0; i < (roundIndex - 1) * SKIP_PER_ROUND; i++) {
+        rng();
+    }
+
+    // daarna 15 unieke nummers 1–75 pakken
     const nums = [];
     while (nums.length < 15) {
         const n = Math.floor(rng() * 75) + 1;
@@ -145,6 +162,7 @@ function getRoundNumbers(handle, roundIndex) {
     }
     return nums;
 }
+
 
 function drawHostCard(numbers) {
     const container = document.getElementById("round-host");
