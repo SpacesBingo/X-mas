@@ -237,6 +237,16 @@
         box-shadow: 0 3px 8px rgba(0,0,0,0.5);
         user-select: none;
     }
+
+   /* lichte hover op desktop, zodat het “touchable” voelt */
+@media (hover: hover) and (pointer: fine) {
+    .cell:hover {
+        filter: brightness(1.08);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.8);
+    }
+}
+
    
    /* deelnemer markeert zelf aangekruiste nummers */
 .cell.marked {
