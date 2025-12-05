@@ -209,10 +209,19 @@ function getRoundNumbers(handle, roundIndex) {
 // spelerkaart tekenen
 function generate() {
     let name = document.getElementById("username").value.trim();
-    if (!name) {
-        alert("Vul je Twitter @handle in!");
-        return;
-    }
+
+// leeg?
+if (!name) {
+    alert("Vul je Twitter @handle in!");
+    return;
+}
+
+// controleer of handle begint met @
+if (!name.startsWith("@")) {
+    alert("Je handle moet beginnen met @. Voorbeeld: @jouwnaam");
+    return;
+}
+
 
     // zorg dat er altijd een @ in de weergave staat
     let displayHandle = name.startsWith("@") ? name : "@" + name;
