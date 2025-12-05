@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>KEEK Kerst Bingo – Host controle</title>
+<title>Host controle – KEEK Kerst Bingo 🎄</title>
 <style>
     * { box-sizing: border-box; }
     body {
@@ -21,7 +21,7 @@
         border-radius: 18px;
         border: 2px solid #ff3b3b;
         padding: 24px 22px 26px;
-        max-width: 640px;
+        max-width: 720px;
         width: 100%;
         box-shadow: 0 18px 45px rgba(0,0,0,0.6);
         text-align: left;
@@ -55,11 +55,53 @@
         background-image: linear-gradient(90deg, #ff3b3b, #ff9100);
         box-shadow: 0 8px 18px rgba(0,0,0,0.5);
     }
-
     button:hover { filter: brightness(1.05); }
 
-    .card-wrapper { margin-top: 18px; }
-    .round-title { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+    .numbers-section {
+        margin-top: 16px;
+    }
+    .numbers-title {
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 6px;
+    }
+    .numbers-grid {
+        display: grid;
+        grid-template-columns: repeat(15, 1fr); /* 5 rijen van 15 = 75 nummers */
+        gap: 4px;
+        margin-bottom: 8px;
+    }
+    .num-cell {
+        padding: 4px 0;
+        border-radius: 6px;
+        border: 1px solid rgba(255,255,255,0.25);
+        text-align: center;
+        font-size: 11px;
+        cursor: pointer;
+        user-select: none;
+        background: #041824;
+    }
+    .num-cell.selected {
+        background: #f59e0b;
+        color: #000;
+        border-color: #fffbeb;
+        box-shadow: 0 0 8px rgba(245,158,11,0.8);
+    }
+
+    .numbers-footer {
+        font-size: 12px;
+        opacity: 0.85;
+        margin-bottom: 4px;
+    }
+
+    .card-wrapper {
+        margin-top: 18px;
+    }
+    .round-title {
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 4px;
+    }
     .round-grid {
         display: grid;
         grid-template-columns: repeat(5, 1fr);
@@ -81,6 +123,12 @@
     .host-result { margin-top: 10px; font-size: 13px; min-height: 20px; }
     .ok { color: #4ade80; }
     .nok { color: #fca5a5; }
+
+    @media (max-width: 640px) {
+        .numbers-grid {
+            grid-template-columns: repeat(10, 1fr); /* iets breder op mobiel */
+        }
+    }
 </style>
 </head>
 <body>
@@ -89,7 +137,7 @@
     <div class="panel-header">
         <h1>Host controle – KEEK Kerst Bingo 🎄</h1>
         <p class="subtitle">
-            Vul @handle, ronde en getrokken nummers in om een bingo te controleren.
+            Klik elk nummer zodra het wordt getrokken. Vul daarna @handle en ronde in om een bingo te controleren.
         </p>
     </div>
 
@@ -103,8 +151,15 @@
         <option value="3">Ronde 3</option>
     </select>
 
-    <label for="host-draws">Getrokken nummers (tot en met het bingonummer)</label>
-    <input id="host-draws" placeholder="Bijv: 2 11 24 43 53 4 29 44 61 63 ...">
+    <div class="numbers-section">
+        <div class="numbers-title">Getrokken nummers (klik om te selecteren / deselecteren)</div>
+        <div id="numbers-grid" class="numbers-grid"></div>
+        <div class="numbers-footer">
+            <strong>Geselecteerd:</strong>
+            <span id="draw-list">nog geen nummers geselecteerd.</span>
+        </div>
+        <button type="button" onclick="resetDraws()">Reset getrokken nummers</button>
+    </div>
 
     <button onclick="checkBingo()">Controleer bingo</button>
 
@@ -117,7 +172,7 @@
 </div>
 
 <script>
-// zelfde RNG als op index.html – MOET identiek blijven!
+// ---------- RNG / kaartgenerator (moet overeenkomen met index.html) ----------
 function hashString(str) {
     let h = 0;
     for (let i = 0; i < str.length; i++) {
@@ -135,26 +190,22 @@ function makeRng(seed) {
     };
 }
 
+// zelfde functie als in index.html
 function getRoundNumbers(handle, roundIndex) {
-    // spaties eraf, @ weghalen, lowercase
     let cleaned = handle.trim();
     if (cleaned.startsWith("@")) {
         cleaned = cleaned.slice(1);
     }
     cleaned = cleaned.toLowerCase();
 
-    // één basis-seed per handle
     const baseSeed = hashString(cleaned);
     const rng = makeRng(baseSeed);
 
-    // per ronde een stuk van de reeks overslaan,
-    // zodat ronde 1, 2 en 3 echt andere patronen hebben
-    const SKIP_PER_ROUND = 30; // mag ook 40/50 zijn, maar 30 is zat
+    const SKIP_PER_ROUND = 30;
     for (let i = 0; i < (roundIndex - 1) * SKIP_PER_ROUND; i++) {
         rng();
     }
 
-    // daarna 15 unieke nummers 1–75 pakken
     const nums = [];
     while (nums.length < 15) {
         const n = Math.floor(rng() * 75) + 1;
@@ -163,7 +214,50 @@ function getRoundNumbers(handle, roundIndex) {
     return nums;
 }
 
+// ---------- beheer getrokken nummers via klikken ----------
+let drawnSet = new Set();
 
+function initNumbersGrid() {
+    const grid = document.getElementById("numbers-grid");
+    grid.innerHTML = "";
+    for (let n = 1; n <= 75; n++) {
+        const cell = document.createElement("div");
+        cell.className = "num-cell";
+        cell.textContent = n;
+        cell.dataset.number = n;
+        cell.addEventListener("click", () => toggleNumber(n, cell));
+        grid.appendChild(cell);
+    }
+}
+
+function toggleNumber(n, cell) {
+    if (drawnSet.has(n)) {
+        drawnSet.delete(n);
+        cell.classList.remove("selected");
+    } else {
+        drawnSet.add(n);
+        cell.classList.add("selected");
+    }
+    updateDrawList();
+}
+
+function updateDrawList() {
+    const listEl = document.getElementById("draw-list");
+    if (drawnSet.size === 0) {
+        listEl.textContent = "nog geen nummers geselecteerd.";
+        return;
+    }
+    const arr = Array.from(drawnSet).sort((a, b) => a - b);
+    listEl.textContent = arr.join(", ");
+}
+
+function resetDraws() {
+    drawnSet.clear();
+    document.querySelectorAll(".num-cell.selected").forEach(el => el.classList.remove("selected"));
+    updateDrawList();
+}
+
+// ---------- kaart tekenen + bingo controle ----------
 function drawHostCard(numbers) {
     const container = document.getElementById("round-host");
     container.innerHTML = "";
@@ -176,29 +270,22 @@ function drawHostCard(numbers) {
 }
 
 function checkBingo() {
-    const handle = document.getElementById("host-handle").value.trim();
+    const handleInput = document.getElementById("host-handle").value.trim();
     const round = parseInt(document.getElementById("host-round").value, 10);
-    const drawsRaw = document.getElementById("host-draws").value.trim();
     const resultEl = document.getElementById("host-result");
 
-    if (!handle || !drawsRaw) {
-        resultEl.innerHTML = '<span class="nok">Vul zowel @handle als getrokken nummers in.</span>';
+    if (!handleInput) {
+        resultEl.innerHTML = '<span class="nok">Vul een @handle in.</span>';
         return;
     }
-
-    const drawnSet = new Set();
-    drawsRaw.split(/[\s,;]+/).forEach(part => {
-        const n = parseInt(part, 10);
-        if (!isNaN(n)) drawnSet.add(n);
-    });
 
     if (drawnSet.size === 0) {
-        resultEl.innerHTML = '<span class="nok">Ik zie geen geldige nummers in de invoer.</span>';
+        resultEl.innerHTML = '<span class="nok">Er zijn nog geen getrokken nummers geselecteerd.</span>';
         return;
     }
 
-    const cardNums = getRoundNumbers(handle, round);
-    drawHostCard(cardNums); // laat altijd de kaart zien
+    const cardNums = getRoundNumbers(handleInput, round);
+    drawHostCard(cardNums);
 
     const rows = [
         [0,1,2,3,4],
@@ -212,16 +299,22 @@ function checkBingo() {
         if (full) lineCount++;
     });
 
+    const handleDisplay = handleInput.startsWith("@") ? handleInput : "@" + handleInput;
+
     if (lineCount === 0) {
-        resultEl.innerHTML = '<span class="nok">❌ Geen complete rij voor ' + handle + ' in ronde ' + round + '.</span>';
+        resultEl.innerHTML = '<span class="nok">❌ Geen complete rij voor ' + handleDisplay + ' in ronde ' + round + '.</span>';
     } else if (lineCount === 1) {
-        resultEl.innerHTML = '<span class="ok">✅ Geldige bingo (1 lijn) voor ' + handle + ' in ronde ' + round + '.</span>';
+        resultEl.innerHTML = '<span class="ok">✅ Geldige bingo (1 lijn) voor ' + handleDisplay + ' in ronde ' + round + '.</span>';
     } else if (lineCount === 2) {
-        resultEl.innerHTML = '<span class="ok">✅ Geldige bingo (2 lijnen) voor ' + handle + ' in ronde ' + round + '.</span>';
+        resultEl.innerHTML = '<span class="ok">✅ Geldige bingo (2 lijnen) voor ' + handleDisplay + ' in ronde ' + round + '.</span>';
     } else {
-        resultEl.innerHTML = '<span class="ok">✅ VOLLE KAART! (3 lijnen) voor ' + handle + ' in ronde ' + round + '.</span>';
+        resultEl.innerHTML = '<span class="ok">✅ VOLLE KAART! (3 lijnen) voor ' + handleDisplay + ' in ronde ' + round + '.</span>';
     }
 }
+
+// initialiseer grid bij laden
+initNumbersGrid();
+updateDrawList();
 </script>
 
 </body>
