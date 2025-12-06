@@ -338,6 +338,20 @@ document.getElementById("checkBtn").onclick = () => {
         resultBox.className = "result fail";
     }
 };
+
+    /* --- Reset-knop activeren --- */
+document.getElementById("resetBtn").onclick = () => {
+    resetSelections();
+};
+
+
+/* --- Automatisch resetten bij veranderen van ronde --- */
+document.getElementById("roundSelect").addEventListener("change", () => {
+    resetSelections();
+});
+
+
+    
 </script>
 
 </body>
