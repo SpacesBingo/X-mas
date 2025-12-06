@@ -335,7 +335,7 @@
       </div>
     </div>
 
-    <!-- Kaart-ID van de speler -->
+    <!-- Kaart-ID van de speler (één ID voor de kaart, alle rondes) -->
     <div class="card-id-row">
       <span class="card-id-label">Kaart-ID:</span>
       <span id="cardIdValue" class="card-id-value">–</span>
@@ -436,33 +436,29 @@
       return pool.slice(0, 15).sort((a, b) => a - b);
     }
 
-    // Kaart-ID (zelfde algoritme gebruiken we op index.html)
-    function generateCardId(handle, round) {
+    // Kaart-ID: 1 ID per kaart (voor alle 3 rondes), zelfde als index.html
+    function generateCardId(handle) {
       const base = (handle || "").trim().toLowerCase();
       if (!base) return "–";
 
-      const key = base + "::" + round;
+      const key = base + "::card";   // zelfde key als in index.html
       const [seed] = cyrb128(key);
-
-      const short = (seed % 1000000).toString().padStart(6, "0"); // 6 cijfers
-      return "SB-" + round + "-" + short;
+      const short = (seed % 1000000).toString().padStart(6, "0");
+      return "SB-" + short;
     }
 
     function updateCardIdDisplay() {
       const handleInput = document.getElementById("hostHandleInput");
-      const roundSelect = document.getElementById("roundSelect");
       const cardIdEl = document.getElementById("cardIdValue");
-      if (!handleInput || !roundSelect || !cardIdEl) return;
+      if (!handleInput || !cardIdEl) return;
 
       const handle = (handleInput.value || "").trim();
-      const round = roundSelect.value;
-
       if (!handle) {
         cardIdEl.textContent = "–";
         return;
       }
 
-      cardIdEl.textContent = generateCardId(handle, round);
+      cardIdEl.textContent = generateCardId(handle);
     }
 
     /*********************************************************
@@ -600,7 +596,6 @@
 
       const checkBtn = document.getElementById('checkBingoButton');
       const handleInput = document.getElementById('hostHandleInput');
-      const roundSelect = document.getElementById('roundSelect');
 
       if (checkBtn) {
         checkBtn.addEventListener('click', () => {
@@ -611,10 +606,6 @@
 
       if (handleInput) {
         handleInput.addEventListener('input', updateCardIdDisplay);
-      }
-
-      if (roundSelect) {
-        roundSelect.addEventListener('change', updateCardIdDisplay);
       }
 
       // direct bij load alvast proberen een ID te tonen
