@@ -86,12 +86,19 @@
     }
 
     .number-grid {
-        display: grid;
-        grid-template-columns: repeat(10, 1fr);
-        gap: 4px;
-        margin-top: 16px;
-        margin-bottom: 18px;
-    }
+    display: grid;
+    grid-template-columns: repeat(10, minmax(0, 1fr));
+    gap: 4px;
+    margin-top: 16px;
+    margin-bottom: 18px;
+
+    /* NIEUW: maak het grid echt breed */
+    width: 100%;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 
     .num {
     background: rgba(255,255,255,0.06);
