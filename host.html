@@ -436,6 +436,39 @@
         [pool[i], pool[j]] = [pool[j], pool[i]];
       }
 
+          // Maak een korte, leesbare kaart-ID op basis van handle + ronde
+    function generateCardId(handle, round) {
+      const base = (handle || "").trim().toLowerCase();
+      if (!base) return "–";
+
+      const key = base + "::" + round;
+      const [seed] = cyrb128(key);
+
+      // korte code uit het seed-getal
+      const short = (seed % 1000000).toString().padStart(6, "0"); // altijd 6 cijfers
+
+      // Prefix "SB" = SpacesBingo, plus ronde
+      return "SB-" + round + "-" + short;
+    }
+
+    function updateCardIdDisplay() {
+      const handleInput = document.getElementById("hostHandleInput");
+      const roundSelect = document.getElementById("roundSelect");
+      const cardIdEl = document.getElementById("cardIdValue");
+      if (!handleInput || !roundSelect || !cardIdEl) return;
+
+      const handle = (handleInput.value || "").trim();
+      const round = roundSelect.value;
+
+      if (!handle) {
+        cardIdEl.textContent = "–";
+        return;
+      }
+
+      cardIdEl.textContent = generateCardId(handle, round);
+    }
+
+
       return pool.slice(0, 15).sort((a, b) => a - b);
     }
 
