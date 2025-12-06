@@ -239,6 +239,23 @@ function getRoundNumbers(handle, roundIndex) {
     return nums;
 }
 
+   function getCardId(handle, roundIndex) {
+    let cleaned = handle.trim();
+    if (cleaned.startsWith("@")) {
+        cleaned = cleaned.slice(1);
+    }
+    cleaned = cleaned.toLowerCase();
+
+    // combineer handle + ronde tot één seed
+    const base = cleaned + "#" + roundIndex;
+    const seed = hashString(base);
+
+    // maak een nette, korte ID (bijv. SB-2-AB3F9)
+    const suffix = seed.toString(36).toUpperCase();
+    return "SB-" + roundIndex + "-" + suffix;
+}
+
+
 // ---------- beheer getrokken nummers via klikken ----------
 let drawnSet = new Set();
 
