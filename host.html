@@ -603,8 +603,9 @@
 
       renderPlayerCard(cardContainer, cardNumbers, drawnSet);
 
-      const { ok, description } =
-        evaluateBingo(cardNumbers, drawnSet, round);
+      const { ok, description, fullCard } =
+  evaluateBingo(cardNumbers, drawnSet, round);
+
 
       if (ok) {
         let extra = "";
