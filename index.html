@@ -12,13 +12,17 @@
     }
 
     body {
-        margin: 0;
-        padding: 16px;
-        background: radial-gradient(circle at top, #122033 0%, #050b16 60%, #02040a 100%);
-        color: #fff;
-        display: flex;
-        justify-content: center;
-    }
+    margin: 0;
+    padding: 16px;
+    background: radial-gradient(circle at top, #122033 0%, #050b16 60%, #02040a 100%);
+    color: #fff;
+
+    display: flex;
+    flex-direction: column;   /* zorgt dat elementen onder elkaar blijven */
+    align-items: center;      /* horizontaal centreren */
+    min-height: 100vh;        /* volledige hoogte scherm */
+}
+
 
     .panel {
         width: 100%;
