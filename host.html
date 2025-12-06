@@ -170,25 +170,51 @@
         font-size: 0.75rem;
         color: var(--text-soft);
     }
+
+    .row-fields {
+        display: flex;
+        gap: 16px;
+        margin-bottom: 20px;
+}
+
+    .field {
+        flex: 1;
+}
+    
 </style>
 
 </head>
 <body>
+
+    <body>
 
 <div class="panel">
 
     <h1>Host controle – X-Mas Bingo 🎄</h1>
     <p class="subtitle">Controleer bingo op basis van @handle + ronde + getrokken nummers.</p>
 
-    <label>X @handle speler</label>
-    <input id="handleInput" placeholder="@naam">
 
-    <label>Ronde</label>
-    <select id="roundSelect">
-        <option value="1">Ronde 1</option>
-        <option value="2">Ronde 2</option>
-        <option value="3">Ronde 3</option>
-    </select>
+    <!-- kaart-id / grid / etc -->
+
+</div>
+
+<div class="row-fields">
+
+    <div class="field">
+        <label>X @handle speler</label>
+        <input id="player" placeholder="@naam">
+    </div>
+
+    <div class="field">
+        <label>Ronde</label>
+        <select id="round">
+            <option>Ronde 1</option>
+            <option>Ronde 2</option>
+            <option>Ronde 3</option>
+        </select>
+    </div>
+
+</div>
 
     <div class="card-id">Kaart-ID: <span id="cardId">–</span></div>
 
