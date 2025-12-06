@@ -342,20 +342,22 @@
     </div>
 
     <div class="field-group" style="margin-top: 14px;">
-      <label for="drawnNumbersInput">Getrokken nummers (tot en met het bingonummer)</label>
-      <textarea
-        id="drawnNumbersInput"
-        placeholder="Bijv.: 5 14 22 37 44 60 73"
-      ></textarea>
+  <!-- Verborgen tekstvak voor getrokken nummers
+       (nodig voor de code, maar niet zichtbaar voor de host) -->
+  <textarea
+    id="drawnNumbersInput"
+    style="display:none;"
+  ></textarea>
 
-      <!-- Klikbare nummers -->
-      <div class="host-number-grid-wrapper">
-        <p class="host-number-grid-title">
-          Klik op de nummers die getrokken zijn (1–75):
-        </p>
-        <div id="hostNumberGrid" class="host-number-grid"></div>
-      </div>
-    </div>
+  <!-- Klikbare nummers -->
+  <div class="host-number-grid-wrapper">
+    <p class="host-number-grid-title">
+      Klik op de nummers die getrokken zijn (1–75):
+    </p>
+    <div id="hostNumberGrid" class="host-number-grid"></div>
+  </div>
+</div>
+
 
     <div class="controls-row">
       <button id="checkBingoButton" class="btn-primary">
