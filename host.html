@@ -1,455 +1,562 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-<meta charset="UTF-8">
-<title>Host controle – X-Mas Bingo 🎄</title>
-<style>
-    * { box-sizing: border-box; }
+  <meta charset="UTF-8" />
+  <title>Host controle – X-Mas Bingo 🎄</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    :root {
+      --bg-main: #050b16;
+      --bg-panel: #081724;
+      --accent: #ff4b4b;
+      --accent-soft: rgba(255, 75, 75, 0.3);
+      --text-main: #f7f7ff;
+      --text-soft: #a9b3c4;
+      --success: #00c878;
+      --danger: #ff4b4b;
+      --card-bg: #050d18;
+      --card-border: #1f2a3c;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
 
     body {
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
-        margin: 0;
-        min-height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background:
-            radial-gradient(circle at top, rgba(255,255,255,0.12) 0, transparent 45%),
-            radial-gradient(circle at bottom, #02111b 0, #000000 60%);
-        color: #fff;
-        padding: 10px;
+      margin: 0;
+      min-height: 100vh;
+      background: radial-gradient(circle at top, #142438 0, #050b16 55%, #01030a 100%);
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
     }
 
-    .panel {
-        position: relative;
-        background: rgba(5, 35, 50, 0.96);
-        border-radius: 22px;
-        border: 2px solid #ff3b3b;
-        padding: 22px 20px 24px;
-        max-width: 720px;
-        width: 100%;
-        box-shadow:
-            0 18px 45px rgba(0,0,0,0.8),
-            0 0 18px rgba(255, 255, 255, 0.06);
+    .host-shell {
+      width: 100%;
+      max-width: 900px;
+      border-radius: 24px;
+      border: 2px solid var(--accent-soft);
+      padding: 24px 20px 22px;
+      background: radial-gradient(circle at top left, rgba(255, 75, 75, 0.08), transparent 55%),
+                  radial-gradient(circle at bottom right, rgba(0, 255, 180, 0.08), transparent 45%),
+                  linear-gradient(135deg, #040814, #071320 60%, #040814 100%);
+      box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.02),
+        0 40px 80px rgba(0, 0, 0, 0.75);
     }
 
-    .panel::before {
-        content: "";
-        position: absolute;
-        top: -60px;
-        left: -40px;
-        right: -40px;
-        height: 120px;
-        background:
-            radial-gradient(circle at 10% 30%, rgba(255,255,255,0.15) 0, transparent 55%),
-            radial-gradient(circle at 80% 20%, rgba(255,255,255,0.12) 0, transparent 55%);
-        opacity: 0.7;
-        pointer-events: none;
+    @media (min-width: 768px) {
+      .host-shell {
+        padding: 28px 32px 26px;
+      }
     }
 
-    .panel-header {
-        text-align: center;
-        margin-bottom: 18px;
-        position: relative;
-        z-index: 1;
+    .host-title {
+      font-size: clamp(1.2rem, 2.1vw, 1.5rem);
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 4px;
     }
 
-    .panel h1 {
-        margin: 0 0 6px;
-        font-size: 24px;
+    .host-title span {
+      font-size: 1.25em;
+      vertical-align: middle;
     }
 
-    .subtitle {
-        margin: 0;
-        font-size: 13px;
-        opacity: 0.9;
+    .host-subtitle {
+      text-align: center;
+      font-size: 0.9rem;
+      color: var(--text-soft);
+      margin-bottom: 20px;
     }
 
-    .form-block {
-        margin-top: 18px;
-        margin-bottom: 12px;
-        position: relative;
-        z-index: 1;
+    .host-grid {
+      display: grid;
+      grid-template-columns: 1.35fr 0.9fr;
+      gap: 14px;
+    }
+
+    @media (max-width: 720px) {
+      .host-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
     }
 
     label {
-        display: block;
-        font-size: 13px;
-        margin-bottom: 4px;
+      font-size: 0.85rem;
+      color: var(--text-soft);
     }
 
-    input, select, textarea {
-        width: 100%;
-        padding: 9px 11px;
-        border-radius: 10px;
-        border: 1px solid rgba(255,255,255,0.25);
-        background: #02141f;
-        color: #fff;
-        font-size: 14px;
-        outline: none;
+    input[type="text"],
+    select,
+    textarea {
+      width: 100%;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      background: rgba(0, 0, 0, 0.36);
+      padding: 9px 11px;
+      color: var(--text-main);
+      font-size: 0.9rem;
+      outline: none;
+      transition: border 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
     }
 
     textarea {
-        min-height: 60px;
-        resize: vertical;
+      min-height: 80px;
+      resize: vertical;
+      font-family: inherit;
     }
 
     input::placeholder,
     textarea::placeholder {
-        color: rgba(255,255,255,0.4);
+      color: rgba(255, 255, 255, 0.32);
     }
 
-    .row {
-        display: flex;
-        gap: 10px;
-        flex-wrap: wrap;
-        align-items: center;
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: rgba(0, 255, 180, 0.65);
+      box-shadow: 0 0 0 1px rgba(0, 255, 180, 0.25);
+      background: rgba(0, 0, 0, 0.6);
     }
 
-    .row > div {
-        flex: 1 1 140px;
-        min-width: 0;
+    .round-select {
+      width: 100%;
     }
 
-    button {
-        padding: 9px 16px;
-        border-radius: 999px;
-        border: none;
-        font-size: 14px;
-        font-weight: 600;
-        color: #fff;
-        cursor: pointer;
-        background-image: linear-gradient(90deg, #ff3b3b, #ff9100);
-        box-shadow: 0 8px 18px rgba(0,0,0,0.7);
-        transition: transform 0.08s ease, box-shadow 0.08s ease, filter 0.08s ease;
-        margin-top: 8px;
+    .controls-row {
+      margin-top: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
     }
 
-    button:hover {
-        filter: brightness(1.05);
-        transform: translateY(-1px);
-        box-shadow: 0 10px 22px rgba(0,0,0,0.85);
+    .btn-primary {
+      border: none;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #ff4b4b, #ff914d);
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.95rem;
+      padding: 9px 22px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow:
+        0 12px 24px rgba(0, 0, 0, 0.7),
+        0 0 12px rgba(255, 106, 74, 0.7);
+      transition: transform 0.1s ease, box-shadow 0.1s ease, filter 0.1s ease;
     }
 
-    .hint {
-        margin-top: 6px;
-        font-size: 11px;
-        opacity: 0.78;
+    .btn-primary:active {
+      transform: translateY(1px) scale(0.99);
+      box-shadow:
+        0 6px 14px rgba(0, 0, 0, 0.9),
+        0 0 6px rgba(255, 106, 74, 0.4);
+      filter: brightness(0.97);
     }
 
-    .divider {
-        height: 1px;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent);
-        margin: 16px 0 12px;
+    .tip {
+      font-size: 0.78rem;
+      color: var(--text-soft);
+      margin-top: 4px;
     }
 
-    .card-wrapper {
-        margin-top: 10px;
-        padding: 10px 10px 12px;
-        border-radius: 14px;
-        border: 1px solid rgba(34,197,94,0.7);
-        background: rgba(2,18,27,0.9);
+    .result-message {
+      font-size: 0.9rem;
+      margin-top: 6px;
     }
 
-    .round-title {
-        margin: 0 0 6px;
-        font-size: 13px;
-        font-weight: 600;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
+    .result-message.ok {
+      color: var(--success);
     }
 
-    .round-grid {
-        display: grid;
-        grid-template-columns: repeat(5, 1fr);
-        gap: 4px;
+    .result-message.fail {
+      color: var(--danger);
     }
 
-    .cell {
-        aspect-ratio: 1 / 1;
-        border-radius: 10px;
-        border: 1px solid rgba(255,255,255,0.3);
-        background: #041824;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 16px;
-        box-shadow: 0 3px 8px rgba(0,0,0,0.5);
-        user-select: none;
+    /* Klikbare nummers voor host */
+    .host-number-grid-wrapper {
+      margin-top: 10px;
     }
 
-    /* markeringen host */
-    .cell.hit {
-        border-color: #22c55e;
-        color: #bbf7d0;
+    .host-number-grid-title {
+      font-size: 0.8rem;
+      opacity: 0.9;
+      margin-bottom: 6px;
+      color: var(--text-soft);
     }
 
-    .cell.line {
-        background: rgba(34,197,94,0.18);
-        box-shadow: 0 0 10px rgba(34,197,94,0.7);
-        font-weight: 600;
+    .host-number-grid {
+      display: grid;
+      grid-template-columns: repeat(10, minmax(0, 1fr));
+      gap: 4px;
     }
 
-    .host-result {
-        margin-top: 10px;
-        font-size: 13px;
+    .host-number-btn {
+      padding: 4px 0;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.04);
+      font-size: 0.8rem;
+      text-align: center;
+      cursor: pointer;
+      user-select: none;
+      transition:
+        transform 0.05s ease,
+        background 0.1s ease,
+        border-color 0.1s ease,
+        box-shadow 0.1s ease;
     }
 
-    .host-result .ok {
-        color: #4ade80;
-        font-weight: 600;
+    .host-number-btn:hover {
+      transform: translateY(-1px);
+      border-color: rgba(255, 255, 255, 0.4);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
     }
 
-    .host-result .nok {
-        color: #f97373;
-        font-weight: 600;
+    .host-number-btn.selected {
+      background: rgba(0, 200, 120, 0.9);
+      border-color: rgba(0, 0, 0, 0.7);
+      font-weight: 600;
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.4);
     }
 
-    .card-id {
-        margin-top: 4px;
-        font-size: 11px;
-        opacity: 0.85;
+    /* Kaart van speler */
+    .player-card-wrapper {
+      margin-top: 18px;
+      border-radius: 16px;
+      border: 1px solid var(--card-border);
+      background: radial-gradient(circle at top, rgba(255, 255, 255, 0.05), transparent 60%),
+                  var(--card-bg);
+      padding: 12px 12px 10px;
     }
 
-    @media (max-width: 600px) {
-        body {
-            padding: 12px 6px 24px;
-            align-items: flex-start;
-            justify-content: flex-start;
-        }
-        .panel {
-            padding: 18px 12px 20px;
-            border-radius: 18px;
-        }
-        .panel h1 {
-            font-size: 20px;
-        }
-        .subtitle {
-            font-size: 12px;
-        }
-        .cell {
-            font-size: 15px;
-        }
+    .player-card-title {
+      font-size: 0.9rem;
+      margin-bottom: 10px;
+      color: var(--text-soft);
     }
-</style>
+
+    .player-card-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 4px;
+    }
+
+    .player-card-cell {
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: rgba(0, 0, 0, 0.35);
+      padding: 9px 0;
+      font-size: 0.9rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .player-card-cell.marked {
+      background: linear-gradient(135deg, rgba(0, 200, 120, 0.8), rgba(0, 255, 180, 0.9));
+      border-color: rgba(0, 0, 0, 0.7);
+      color: #02140a;
+      font-weight: 700;
+      box-shadow: 0 0 12px rgba(0, 255, 170, 0.6);
+    }
+
+    .footer-line {
+      margin-top: 12px;
+      font-size: 0.72rem;
+      color: rgba(255, 255, 255, 0.5);
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+  </style>
 </head>
 <body>
+  <div class="host-shell">
+    <h1 class="host-title">Host controle – X-Mas Bingo <span>🎄</span></h1>
+    <p class="host-subtitle">
+      Vul @handle, ronde en getrokken nummers in om een bingo te controleren.
+    </p>
 
-<div class="panel">
-    <div class="panel-header">
-        <h1>Host controle – X-Mas Bingo 🎄</h1>
-        <p class="subtitle">Vul @handle, ronde en getrokken nummers in om een bingo te controleren.</p>
+    <div class="host-grid">
+      <div class="field-group">
+        <label for="hostHandleInput">X @handle van speler</label>
+        <input
+          id="hostHandleInput"
+          type="text"
+          placeholder="@spelersnaam"
+          autocomplete="off"
+        />
+      </div>
+
+      <div class="field-group">
+        <label for="roundSelect">Ronde</label>
+        <select id="roundSelect" class="round-select">
+          <option value="1">Ronde 1</option>
+          <option value="2">Ronde 2</option>
+          <option value="3">Ronde 3</option>
+        </select>
+      </div>
     </div>
-   
-   <!-- Klikbare nummers voor de host -->
-<div class="host-number-grid-wrapper">
-  <p class="host-number-grid-title">
-    Klik op de nummers die getrokken zijn:
-  </p>
-  <div id="hostNumberGrid" class="host-number-grid"></div>
-</div>
 
+    <div class="field-group" style="margin-top: 14px;">
+      <label for="drawnNumbersInput">Getrokken nummers (tot en met het bingonummer)</label>
+      <textarea
+        id="drawnNumbersInput"
+        placeholder="Bijv.: 5 14 22 37 44 60 73"
+      ></textarea>
 
-    <div class="form-block">
-        <div class="row">
-            <div>
-                <label for="handle">X @handle van speler</label>
-                <input id="handle" placeholder="@spelersnaam">
-            </div>
-            <div style="max-width: 160px;">
-                <label for="round">Ronde</label>
-                <select id="round">
-                    <option value="1">Ronde 1</option>
-                    <option value="2">Ronde 2</option>
-                    <option value="3">Ronde 3</option>
-                </select>
-            </div>
-        </div>
-
-        <label for="numbers" style="margin-top:8px;">Getrokken nummers (tot en met het bingonummer)</label>
-        <textarea id="numbers" placeholder="Bijv.: 5 14 22 37 44 60 73"></textarea>
-
-        <button onclick="checkBingo()">Controleer bingo</button>
-
-        <p class="hint">
-            Tip: je kunt nummers scheiden met spaties, komma's of nieuwe regels. Dubbele nummers worden automatisch genegeerd.
+      <!-- Klikbare nummers -->
+      <div class="host-number-grid-wrapper">
+        <p class="host-number-grid-title">
+          Klik op de nummers die getrokken zijn (1–75):
         </p>
+        <div id="hostNumberGrid" class="host-number-grid"></div>
+      </div>
     </div>
 
-    <div class="divider"></div>
-
-    <div class="card-wrapper">
-        <div class="round-title">
-            <span>Kaart van speler (geselecteerde ronde)</span>
-        </div>
-        <div id="round-host" class="round-grid"></div>
-        <div id="card-id" class="card-id"></div>
+    <div class="controls-row">
+      <button id="checkBingoButton" class="btn-primary">
+        Controleer bingo
+      </button>
+      <span class="tip">
+        Tip: je kunt nummers scheiden met spaties, komma's of nieuwe regels. Dubbele nummers
+        worden automatisch genegeerd.
+      </span>
     </div>
 
-    <div id="host-result" class="host-result"></div>
-</div>
+    <div id="hostResult" class="result-message"></div>
 
-<script>
-/* ---------- Zelfde RNG / kaartgenerator als index.html ---------- */
-function hashString(str) {
-    let h = 0;
-    for (let i = 0; i < str.length; i++) {
-        h = (h * 31 + str.charCodeAt(i)) | 0;
+    <div class="player-card-wrapper">
+      <div class="player-card-title">
+        Kaart van speler (geselecteerde ronde)
+      </div>
+      <div id="playerCardContainer" class="player-card-grid">
+        <!-- kaart komt hier -->
+      </div>
+    </div>
+
+    <div class="footer-line">
+      <span id="generatedAt"></span>
+      <span>© spacesbingo</span>
+    </div>
+  </div>
+
+  <script>
+    /*********************************************************
+     *  RNG & kaartgeneratie – zelfde principe als index
+     *********************************************************/
+    function cyrb128(str) {
+      let h1 = 1779033703, h2 = 3144134277,
+          h3 = 1013904242, h4 = 2773480762;
+      for (let i = 0, k; i < str.length; i++) {
+        k = str.charCodeAt(i);
+        h1 = h2 ^ Math.imul(h1 ^ k, 597399067);
+        h2 = h3 ^ Math.imul(h2 ^ k, 2869860233);
+        h3 = h4 ^ Math.imul(h3 ^ k, 951274213);
+        h4 = h1 ^ Math.imul(h4 ^ k, 2716044179);
+      }
+      h1 = Math.imul(h3 ^ (h1 >>> 18), 597399067);
+      h2 = Math.imul(h4 ^ (h2 >>> 22), 2869860233);
+      h3 = Math.imul(h1 ^ (h3 >>> 17), 951274213);
+      h4 = Math.imul(h2 ^ (h4 >>> 19), 2716044179);
+      return [(h1 ^ h2 ^ h3 ^ h4) >>> 0];
     }
-    return Math.abs(h) || 1;
-}
 
-function makeRng(seed) {
-    let s = seed % 2147483647;
-    if (s <= 0) s += 2147483646;
-    return function () {
-        s = (s * 16807) % 2147483647;
-        return (s - 1) / 2147483646;
-    };
-}
-
-function getRoundNumbers(handle, roundIndex) {
-    let cleaned = handle.trim();
-    if (cleaned.startsWith("@")) {
-        cleaned = cleaned.slice(1);
-    }
-    cleaned = cleaned.toLowerCase();
-
-    const baseSeed = hashString(cleaned);
-    const rng = makeRng(baseSeed);
-
-    const SKIP_PER_ROUND = 30;
-    for (let i = 0; i < (roundIndex - 1) * SKIP_PER_ROUND; i++) {
-        rng();
+    function mulberry32(a) {
+      return function() {
+        let t = a += 0x6d2b79f5;
+        t = Math.imul(t ^ t >>> 15, t | 1);
+        t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+        return ((t ^ t >>> 14) >>> 0) / 4294967296;
+      };
     }
 
-    const nums = [];
-    while (nums.length < 15) {
-        const n = Math.floor(rng() * 75) + 1;
-        if (!nums.includes(n)) nums.push(n);
+    function createRngFromHandleAndRound(handle, round) {
+      const base = (handle || "").trim().toLowerCase();
+      const key = base + "::" + round;
+      const [seed] = cyrb128(key);
+      return mulberry32(seed);
     }
-    return nums;
-}
 
-/* ---------- Kaart-ID voor anti-fraude ---------- */
-function getCardId(handle, roundIndex) {
-    let cleaned = handle.trim();
-    if (cleaned.startsWith("@")) {
-        cleaned = cleaned.slice(1);
+    // 3 rondes, elk 15 nummers uit 1–75
+    function generateCardNumbers(handle, round) {
+      const rng = createRngFromHandleAndRound(handle, round);
+      const pool = [];
+      for (let i = 1; i <= 75; i++) pool.push(i);
+
+      // shuffle met RNG
+      for (let i = pool.length - 1; i > 0; i--) {
+        const j = Math.floor(rng() * (i + 1));
+        [pool[i], pool[j]] = [pool[j], pool[i]];
+      }
+
+      return pool.slice(0, 15).sort((a, b) => a - b);
     }
-    cleaned = cleaned.toLowerCase();
 
-    const base = cleaned + "#" + roundIndex;
-    const seed = hashString(base);
-    const suffix = seed.toString(36).toUpperCase();
+    /*********************************************************
+     *  Host-number grid (klikbare nummers)
+     *********************************************************/
+    const MAX_BINGO_NUMBER = 75;
 
-    return "SB-" + roundIndex + "-" + suffix;
-}
+    function initHostNumberGrid() {
+      const grid = document.getElementById('hostNumberGrid');
+      const drawnInput = document.getElementById('drawnNumbersInput');
+      if (!grid || !drawnInput) return;
 
-/* ---------- Helpers ---------- */
-function parseNumbers(str) {
-    // split op alles wat geen cijfer is
-    const parts = str.split(/\D+/);
-    const result = [];
-    const seen = new Set();
+      // knoppen 1–MAX_BINGO_NUMBER
+      for (let i = 1; i <= MAX_BINGO_NUMBER; i++) {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.textContent = i;
+        btn.className = 'host-number-btn';
+        btn.dataset.number = String(i);
 
-    for (const p of parts) {
-        if (!p) continue;
-        const n = parseInt(p, 10);
-        if (!Number.isNaN(n) && n >= 1 && n <= 75 && !seen.has(n)) {
-            seen.add(n);
-            result.push(n);
+        btn.addEventListener('click', () => {
+          btn.classList.toggle('selected');
+          updateDrawnNumbersFromGrid(grid, drawnInput);
+        });
+
+        grid.appendChild(btn);
+      }
+
+      // als host in het tekstvak typt, sync terug naar grid
+      drawnInput.addEventListener('input', () => {
+        syncGridFromInput(grid, drawnInput);
+      });
+    }
+
+    function updateDrawnNumbersFromGrid(grid, drawnInput) {
+      const selectedButtons = grid.querySelectorAll('.host-number-btn.selected');
+      const numbers = Array.from(selectedButtons)
+        .map(btn => parseInt(btn.dataset.number, 10))
+        .filter(n => !isNaN(n))
+        .sort((a, b) => a - b);
+
+      drawnInput.value = numbers.join(' ');
+    }
+
+    function syncGridFromInput(grid, drawnInput) {
+      const raw = drawnInput.value;
+      const nums = raw
+        .split(/[\s,;,]+/)
+        .map(x => parseInt(x, 10))
+        .filter(n => !isNaN(n));
+
+      const set = new Set(nums);
+      grid.querySelectorAll('.host-number-btn').forEach(btn => {
+        const n = parseInt(btn.dataset.number, 10);
+        if (set.has(n)) {
+          btn.classList.add('selected');
+        } else {
+          btn.classList.remove('selected');
         }
+      });
     }
-    return result;
-}
 
-function drawHostCard(cardNums, drawnSet, fullRowIndices) {
-    const container = document.getElementById("round-host");
-    container.innerHTML = "";
+    /*********************************************************
+     *  Bingo-check & kaart tonen
+     *********************************************************/
+    function parseDrawnNumbers(raw) {
+      return Array.from(
+        new Set(
+          raw
+            .split(/[\s,;]+/)
+            .map(x => parseInt(x, 10))
+            .filter(n => !isNaN(n))
+        )
+      );
+    }
 
-    for (let i = 0; i < cardNums.length; i++) {
-        const cell = document.createElement("div");
-        cell.className = "cell";
-        if (drawnSet.has(cardNums[i])) {
-            cell.classList.add("hit");
+    function renderPlayerCard(container, numbers, drawnSet) {
+      container.innerHTML = '';
+      numbers.forEach(num => {
+        const cell = document.createElement('div');
+        cell.className = 'player-card-cell';
+        cell.textContent = num;
+        if (drawnSet.has(num)) {
+          cell.classList.add('marked');
         }
-        if (fullRowIndices.includes(i)) {
-            cell.classList.add("line");
-        }
-        cell.textContent = cardNums[i];
         container.appendChild(cell);
+      });
     }
-}
 
-/* ---------- Hoofdcontrole ---------- */
-function checkBingo() {
-    const handleInput = document.getElementById("handle").value.trim();
-    const round = parseInt(document.getElementById("round").value, 10);
-    const numbersStr = document.getElementById("numbers").value;
-    const resultEl = document.getElementById("host-result");
-    const cardIdEl = document.getElementById("card-id");
+    function handleCheckBingo() {
+      const handleInput = document.getElementById('hostHandleInput');
+      const roundSelect = document.getElementById('roundSelect');
+      const drawnInput = document.getElementById('drawnNumbersInput');
+      const resultEl = document.getElementById('hostResult');
+      const cardContainer = document.getElementById('playerCardContainer');
 
-    resultEl.innerHTML = "";
-    cardIdEl.textContent = "";
-    document.getElementById("round-host").innerHTML = "";
+      const handle = (handleInput.value || '').trim();
+      const round = parseInt(roundSelect.value, 10);
+      const drawnNumbers = parseDrawnNumbers(drawnInput.value || '');
 
-    if (!handleInput) {
-        alert("Vul de X @handle van de speler in.");
+      if (!handle) {
+        resultEl.textContent = 'Vul eerst een X @handle van de speler in.';
+        resultEl.className = 'result-message fail';
         return;
-    }
-    if (!handleInput.startsWith("@")) {
-        alert("Handle moet beginnen met @. Voorbeeld: @spelersnaam");
+      }
+
+      if (drawnNumbers.length === 0) {
+        resultEl.textContent = 'Vul of klik minimaal één getrokken nummer in.';
+        resultEl.className = 'result-message fail';
         return;
+      }
+
+      const cardNumbers = generateCardNumbers(handle, round);
+      const drawnSet = new Set(drawnNumbers);
+
+      renderPlayerCard(cardContainer, cardNumbers, drawnSet);
+
+      const allOnCard = cardNumbers.every(n => drawnSet.has(n));
+      if (allOnCard) {
+        resultEl.textContent =
+          '✅ Geldige bingo voor ' + handle + ' in ronde ' + round + '!';
+        resultEl.className = 'result-message ok';
+      } else {
+        resultEl.textContent =
+          '❌ Geen volledige bingo voor ' + handle + ' in ronde ' + round + '.';
+        resultEl.className = 'result-message fail';
+      }
     }
 
-    const drawnNumbers = parseNumbers(numbersStr);
-    if (drawnNumbers.length === 0) {
-        alert("Vul minstens één getrokken nummer in (1–75).");
-        return;
-    }
+    /*********************************************************
+     *  Init
+     *********************************************************/
+    document.addEventListener('DOMContentLoaded', () => {
+      initHostNumberGrid();
 
-    const drawnSet = new Set(drawnNumbers);
-    const cardNums = getRoundNumbers(handleInput, round);
+      document.getElementById('checkBingoButton')
+        .addEventListener('click', handleCheckBingo);
 
-    const rows = [
-        [0,1,2,3,4],
-        [5,6,7,8,9],
-        [10,11,12,13,14]
-    ];
+      const ts = new Date();
+      const stamp =
+        'Gegenereerd op: ' +
+        ts.getDate().toString().padStart(2, '0') + '-' +
+        (ts.getMonth() + 1).toString().padStart(2, '0') + '-' +
+        ts.getFullYear() +
+        ' ' +
+        ts.getHours().toString().padStart(2, '0') + ':' +
+        ts.getMinutes().toString().padStart(2, '0');
 
-    let lineCount = 0;
-    let fullRowIndices = [];
-
-    rows.forEach(row => {
-        const full = row.every(idx => drawnSet.has(cardNums[idx]));
-        if (full) {
-            lineCount++;
-            fullRowIndices.push(...row);
-        }
+      document.getElementById('generatedAt').textContent = stamp;
     });
-
-    // kaart-ID tonen
-    const cardId = getCardId(handleInput, round);
-    cardIdEl.textContent = "Kaart-ID: " + cardId;
-
-    // kaart tekenen met markeringen
-    drawHostCard(cardNums, drawnSet, fullRowIndices);
-
-    const handleDisplay = handleInput.startsWith("@") ? handleInput : "@" + handleInput;
-
-    if (lineCount === 0) {
-        resultEl.innerHTML = '<span class="nok">❌ Geen complete rij voor ' + handleDisplay + ' in ronde ' + round + '.</span>';
-    } else if (lineCount === 1) {
-        resultEl.innerHTML = '<span class="ok">✅ Geldige bingo (1 lijn) voor ' + handleDisplay + ' in ronde ' + round + '.</span>';
-    } else if (lineCount === 2) {
-        resultEl.innerHTML = '<span class="ok">✅ Geldige bingo (2 lijnen) voor ' + handleDisplay + ' in ronde ' + round + '.</span>';
-    } else {
-        resultEl.innerHTML = '<span class="ok">✅ VOLLE KAART! (3 lijnen) voor ' + handleDisplay + ' in ronde ' + round + '.</span>';
-    }
-}
-</script>
-
+  </script>
 </body>
 </html>
