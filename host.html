@@ -369,6 +369,22 @@ function generateCardID(handle){
     return "SB-" + String(seed % 1000000).padStart(6,"0");
 }
 
+    function updateCardIdFromHandle() {
+    const handleInput = document.getElementById("handleInput");
+    const cardIdSpan  = document.getElementById("cardId");
+
+    if (!handleInput || !cardIdSpan) return;
+
+    const handle = handleInput.value.trim();
+    if (!handle) {
+        cardIdSpan.textContent = "–";   // leeg → geen kaart-id
+        return;
+    }
+
+    cardIdSpan.textContent = generateCardID(handle);
+}
+
+
 /* ---------- Host nummerkeuze ---------- */
 const grid = document.getElementById("numGrid");
 for (let i = 1; i <= 75; i++){
@@ -456,6 +472,20 @@ document.getElementById("resetBtn").onclick = () => {
 document.getElementById("roundSelect").addEventListener("change", () => {
     resetSelections();
 });
+
+// Kaart-ID meteen updaten terwijl je typt
+document.getElementById("handleInput").addEventListener("input", updateCardIdFromHandle);
+
+
+// Kaart-ID meteen updaten terwijl je typt
+document.getElementById("handleInput")
+    .addEventListener("input", updateCardIdFromHandle);
+
+// Kaart-ID ook direct tonen bij pagina-laden
+updateCardIdFromHandle();
+
+
+    
 </script>
 
 </body>
