@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="nl">
 <head>
 <meta charset="UTF-8">
 <title>X-Mas Bingo 🎄</title>
@@ -13,8 +13,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-       
-        /* Kerstnacht achtergrond met lichte gloed en "sneeuw" */
+        /* Kerstnacht achtergrond met lichte gloed */
         background:
             radial-gradient(circle at top, rgba(255,255,255,0.12) 0, transparent 45%),
             radial-gradient(circle at bottom, #02111b 0, #000000 60%);
@@ -37,7 +36,6 @@
         overflow: hidden;
     }
 
-    /* subtiele “lichtjes” bovenin */
     .panel::before {
         content: "";
         position: absolute;
@@ -151,14 +149,6 @@
         opacity: 0.85;
         display: block;
     }
-   #card-footer {
-    margin-top: 18px;
-    text-align: center;
-    font-size: 12px;
-    opacity: 0.75;
-    padding-bottom: 10px;
-}
-
 
     .round-wrapper {
         margin-bottom: 12px;
@@ -181,7 +171,6 @@
         border-color: rgba(250, 204, 21, 0.9);
         box-shadow: 0 0 14px rgba(250,204,21,0.35);
     }
-
 
     .round-title {
         margin: 0 0 6px;
@@ -214,41 +203,36 @@
         font-size: 16px;
         box-shadow: 0 3px 8px rgba(0,0,0,0.5);
         user-select: none;
+        transition: transform 0.08s ease, box-shadow 0.08s ease, filter 0.08s ease;
     }
 
-   /* ronde-kleur borders (zacht) */
-.round1 .cell {
-    border-color: rgba(239, 68, 68, 0.35);   /* rood */
-}
-
-.round2 .cell {
-    border-color: rgba(34, 197, 94, 0.35);   /* groen */
-}
-
-.round3 .cell {
-    border-color: rgba(250, 204, 21, 0.35);  /* goud */
-}
-
-
-   /* lichte hover op desktop, zodat het “touchable” voelt */
-@media (hover: hover) and (pointer: fine) {
-    .cell:hover {
-        filter: brightness(1.08);
-        transform: translateY(-1px);
-        box-shadow: 0 4px 10px rgba(0,0,0,0.8);
+    /* ronde-kleur borders (zacht) */
+    .round1 .cell {
+        border-color: rgba(239, 68, 68, 0.35);
     }
-}
+    .round2 .cell {
+        border-color: rgba(34, 197, 94, 0.35);
+    }
+    .round3 .cell {
+        border-color: rgba(250, 204, 21, 0.35);
+    }
 
-   
-   /* deelnemer markeert zelf aangekruiste nummers */
-.cell.marked {
-    background: #f97316;
-    color: #000;
-    border-color: #fed7aa;
-    box-shadow: 0 0 8px rgba(249,115,22,0.9);
-    font-weight: 600;
-}
+    @media (hover: hover) and (pointer: fine) {
+        .cell:hover {
+            filter: brightness(1.08);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.8);
+        }
+    }
 
+    /* deelnemer markeert zelf aangekruiste nummers */
+    .cell.marked {
+        background: #f97316;
+        color: #000;
+        border-color: #fed7aa;
+        box-shadow: 0 0 8px rgba(249,115,22,0.9);
+        font-weight: 600;
+    }
 
     /* kaart standaard verborgen */
     #card-section {
@@ -257,34 +241,39 @@
         z-index: 1;
     }
 
+    /* footer onder de kaart */
+    #card-footer {
+        margin-top: 18px;
+        text-align: center;
+        font-size: 12px;
+        opacity: 0.75;
+        padding-bottom: 10px;
+    }
+
     /* mobiel tweaks */
     @media (max-width: 480px) {
-        @media (max-width: 480px) {
-    body {
-        padding: 12px 6px 24px;
-        /* NIET meer verticaal centreren op mobiel */
-        align-items: flex-start;
-        justify-content: flex-start;
+        body {
+            padding: 12px 6px 24px;
+            align-items: flex-start;
+            justify-content: flex-start;
+        }
+        .panel {
+            padding: 18px 12px 20px;
+            border-radius: 18px;
+        }
+        .panel h1 {
+            font-size: 20px;
+        }
+        .subtitle {
+            font-size: 12px;
+        }
+        .round-grid {
+            gap: 3px;
+        }
+        .cell {
+            font-size: 15px;
+        }
     }
-    .panel {
-        padding: 18px 12px 20px;
-        border-radius: 18px;
-        margin-top: 8px;
-    }
-    .panel h1 {
-        font-size: 20px;
-    }
-    .subtitle {
-        font-size: 12px;
-    }
-    .round-grid {
-        gap: 3px;
-    }
-    .cell {
-        font-size: 15px;
-    }
-}
-
 </style>
 </head>
 <body>
@@ -302,65 +291,58 @@
         <div class="button-wrap">
             <button onclick="generate()">Geef mij mijn bingokaart</button>
         </div>
-       
         <p class="hint">
-    Je krijgt 1 vaste bingokaart per @handle.<br>
-    Gebruik dezelfde @handle om je kaart terug te halen.<br>
-    <br>
-</p>
-
-
+            Je krijgt 1 vaste bingokaart per @handle.<br>
+            Gebruik dezelfde @handle om je kaart terug te halen. (Tip: maak een screenshot).
+        </p>
     </div>
 
-    
-            <!-- kaart: pas zichtbaar na generate() -->
-<div id="card-section">
-    <div class="divider"></div>
+    <!-- kaart: pas zichtbaar na generate() -->
+    <div id="card-section">
+        <div class="divider"></div>
 
-    <div id="card-info">
-    <div id="card-owner">Kaart voor: @handle</div>
-    <small>
-        Deze kaart is alleen geldig voor deze @handle.<br>
-        Gebruik dezelfde @handle bij het claimen van bingo.<br>
-        (Tip: tik op een vakje om getrokken nummers te markeren.)<br>
-        <span id="card-timestamp-line"></span><br>
-    </small>
-</div>
-
-
-    <div class="round-wrapper round1">
-        <div class="round-title">
-            <span>Ronde 1</span>
-            <span class="round-badge">🔥 Eerste ronde</span>
+        <div id="card-info">
+            <div id="card-owner">Kaart voor: @handle</div>
+            <small>
+                Deze kaart is alleen geldig voor deze @handle.<br>
+                Gebruik dezelfde @handle bij het claimen van bingo.<br>
+                (Tip: tik op een vakje om getrokken nummers te markeren.)<br>
+            </small>
         </div>
-        <div id="round1" class="round-grid"></div>
-    </div>
 
-    <div class="round-wrapper round2">
-        <div class="round-title">
-            <span>Ronde 2</span>
-            <span class="round-badge">🎄 Mid-game</span>
+        <div class="round-wrapper round1">
+            <div class="round-title">
+                <span>Ronde 1</span>
+                <span class="round-badge">🔥 Eerste ronde</span>
+            </div>
+            <div id="round1" class="round-grid"></div>
         </div>
-        <div id="round2" class="round-grid"></div>
-    </div>
 
-    <div class="round-wrapper round3">
-       <div id="card-footer">
-    Gegenereerd op: <span id="gen-time"></span> · © spacesbingo
-</div>
-        <div class="round-title">
-            <span>Ronde 3</span>
-            <span class="round-badge">⭐ Finale ronde</span>
+        <div class="round-wrapper round2">
+            <div class="round-title">
+                <span>Ronde 2</span>
+                <span class="round-badge">🎄 Mid-game</span>
+            </div>
+            <div id="round2" class="round-grid"></div>
         </div>
-        <div id="round3" class="round-grid"></div>
-    </div>
-</div> <!-- hier gaat card-section dicht -->
 
-</div> <!-- panel -->
+        <div class="round-wrapper round3">
+            <div class="round-title">
+                <span>Ronde 3</span>
+                <span class="round-badge">⭐ Finale ronde</span>
+            </div>
+            <div id="round3" class="round-grid"></div>
+        </div>
 
+        <div id="card-footer">
+            Gegenereerd op: <span id="gen-time"></span> · © spacesbingo
+        </div>
+
+    </div> <!-- einde card-section -->
+</div> <!-- einde panel -->
 
 <script>
-/* ---------- RNG / kaartgenerator (moet overeenkomen met host.html) ---------- */
+/* ---------- RNG / kaartgenerator ---------- */
 function hashString(str) {
     let h = 0;
     for (let i = 0; i < str.length; i++) {
@@ -402,19 +384,17 @@ function getRoundNumbers(handle, roundIndex) {
     return nums;
 }
 
-// spelerkaart tekenen
+// spelerkaart genereren + locken + timestamp
 function generate() {
     const STORAGE_HANDLE_KEY = "spacesbingo-locked-handle";
     const STORAGE_TS_KEY = "spacesbingo-card-timestamp";
 
     let name = document.getElementById("username").value.trim();
 
-    // leeg?
     if (!name) {
         alert("Vul je X @handle in!");
         return;
     }
-    // verplicht met @ beginnen
     if (!name.startsWith("@")) {
         alert("Je handle moet beginnen met @. Voorbeeld: @jouwnaam");
         return;
@@ -425,25 +405,22 @@ function generate() {
     try {
         lockedHandle = localStorage.getItem(STORAGE_HANDLE_KEY);
     } catch (e) {
-        // als localStorage geblokkeerd is, doen we gewoon zonder lock
+        // als localStorage niet beschikbaar is, gaan we verder zonder lock
     }
 
     if (lockedHandle && lockedHandle !== name) {
-        // speler probeert andere handle te gebruiken dan de eerder vergrendelde
         alert(
             "Op dit apparaat is al een kaart vergrendeld voor " +
             lockedHandle +
             ". Je krijgt nu die kaart te zien. Je kunt op dit apparaat geen andere @handle gebruiken."
         );
         name = lockedHandle;
-        // input veld ook terugzetten
         document.getElementById("username").value = lockedHandle;
     } else if (!lockedHandle) {
-        // nog geen lock → nu vergrendelen op deze handle
         try {
             localStorage.setItem(STORAGE_HANDLE_KEY, name);
         } catch (e) {
-            // als het niet lukt, negeren we het (kaart werkt verder gewoon)
+            // negeren als het niet lukt
         }
     }
 
@@ -461,24 +438,22 @@ function generate() {
             localStorage.setItem(STORAGE_TS_KEY, ts);
         }
     } catch (e) {
-        // localStorage niet beschikbaar? gebruik alleen memory
         ts = new Date().toISOString();
     }
 
-    // timestamp mooi tonen (NL formaat)
+    // timestamp tonen in footer
     if (ts) {
         const d = new Date(ts);
         const formatted =
-            d.toLocaleDateString("nl-NL") +
-            " " +
+            d.toLocaleDateString("nl-NL") + " " +
             d.toLocaleTimeString("nl-NL", { hour: "2-digit", minute: "2-digit" });
-        const tsEl = document.getElementById("card-timestamp-line");
-        if (tsEl) {
-            tsEl.textContent = "Gegenereerd op: " + formatted;
+        const genEl = document.getElementById("gen-time");
+        if (genEl) {
+            genEl.textContent = formatted;
         }
     }
 
-    // nu de drie rondes tekenen
+    // drie rondes tekenen
     for (let r = 1; r <= 3; r++) {
         const numbers = getRoundNumbers(name, r);
         const container = document.getElementById("round" + r);
@@ -488,7 +463,6 @@ function generate() {
             cell.className = "cell";
             cell.textContent = numbers[i];
 
-            // deelnemer kan eigen nummer “afstrepen”
             cell.addEventListener("click", () => {
                 cell.classList.toggle("marked");
             });
@@ -497,7 +471,6 @@ function generate() {
         }
     }
 }
-
 </script>
 
 </body>
