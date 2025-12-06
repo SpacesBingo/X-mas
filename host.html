@@ -599,14 +599,33 @@
       }
     }
 
-    /*********************************************************
+        /*********************************************************
      *  Init
      *********************************************************/
     document.addEventListener('DOMContentLoaded', () => {
       initHostNumberGrid();
 
-      document.getElementById('checkBingoButton')
-        .addEventListener('click', handleCheckBingo);
+      const checkBtn = document.getElementById('checkBingoButton');
+      const handleInput = document.getElementById('hostHandleInput');
+      const roundSelect = document.getElementById('roundSelect');
+
+      if (checkBtn) {
+        checkBtn.addEventListener('click', () => {
+          handleCheckBingo();
+          updateCardIdDisplay(); // ook bij controleren even bijwerken
+        });
+      }
+
+      if (handleInput) {
+        handleInput.addEventListener('input', updateCardIdDisplay);
+      }
+
+      if (roundSelect) {
+        roundSelect.addEventListener('change', updateCardIdDisplay);
+      }
+
+      // direct bij load alvast proberen een ID te tonen (meestal nog "-")
+      updateCardIdDisplay();
 
       const ts = new Date();
       const stamp =
@@ -620,6 +639,7 @@
 
       document.getElementById('generatedAt').textContent = stamp;
     });
+
   </script>
 </body>
 </html>
