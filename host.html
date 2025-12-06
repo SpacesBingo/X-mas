@@ -236,6 +236,47 @@
         color: var(--text-soft);
     }
 
+    .header-row {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 20px;
+}
+
+/* Titel staat boven inputrij */
+.header-row h1 {
+    margin: 0;
+    font-size: 1.4rem;
+}
+
+/* De inputvelden in één rij */
+.top-inputs {
+    display: flex;
+    width: 100%;
+    max-width: 900px;
+    gap: 12px;
+}
+
+/* Compactere, label-loze velden */
+.top-inputs input,
+.top-inputs select {
+    flex: 1;
+    padding: 8px 10px;
+    font-size: 0.85rem;
+    border-radius: 8px;
+    background: #0005;
+    color: var(--text-main);
+    border: 1px solid #ffffff22;
+}
+
+/* Kaart-ID stijl */
+#cardId {
+    text-align: center;
+    opacity: 0.7;
+}
+
+
     /* Mobile fallback: boven elkaar */
     @media (max-width: 768px) {
         .row-fields {
@@ -253,31 +294,22 @@
 
 <div class="panel">
 
+    <div class="header-row">
     <h1>Host controle – X-Mas Bingo 🎄</h1>
 
-    <!-- Rij: handle – ronde – kaart-id -->
-    <div class="row-fields">
-        <div class="field">
-            <label>X @handle speler</label>
-            <input id="handleInput" placeholder="@naam">
-        </div>
+    <div class="top-inputs">
+        <input id="handleInput" placeholder="@handle">
 
-        <div class="field">
-            <label>Ronde</label>
-            <select id="roundSelect">
-                <option value="1">Ronde 1</option>
-                <option value="2">Ronde 2</option>
-                <option value="3">Ronde 3</option>
-            </select>
-        </div>
+        <select id="roundSelect">
+            <option value="1">Ronde 1</option>
+            <option value="2">Ronde 2</option>
+            <option value="3">Ronde 3</option>
+        </select>
 
-        <div class="field">
-            <label>Kaart-ID</label>
-            <div class="card-id-box">
-                <span id="cardId">–</span>
-            </div>
-        </div>
+        <input id="cardId" disabled placeholder="—">
     </div>
+</div>
+
 
     <!-- Groot vlak met nummers 1–75 -->
     <div class="numbers-panel">
