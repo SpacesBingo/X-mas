@@ -399,11 +399,12 @@ function generateCardId(handle) {
 
 /* ---------- kaart genereren ---------- */
 function generate() {
-    const STORAGE_HANDLE_KEY = "spacesbingo-locked-handle";
     const STORAGE_TS_KEY = "spacesbingo-card-timestamp";
 
-    let name = document.getElementById("username").value.trim();
+    const nameInput = document.getElementById("username");
+    let name = nameInput.value.trim();
 
+    // 1. Basis checks
     if (!name) {
         alert("Vul je X @handle in!");
         return;
@@ -413,26 +414,65 @@ function generate() {
         return;
     }
 
-    let lockedHandle = null;
-    try {
-        lockedHandle = localStorage.getItem(STORAGE_HANDLE_KEY);
-    } catch (e) {}
+    // 2. Handle direct gebruiken (GEEN vergrendeling meer)
+    const displayHandle = name;
 
-    if (lockedHandle && lockedHandle !== name) {
-        alert(
-            "Op dit apparaat is al een kaart vergrendeld voor " +
-            lockedHandle +
-            ". Je krijgt nu die kaart te zien. Je kunt op dit apparaat geen andere @handle gebruiken."
-        );
-        name = lockedHandle;
-        document.getElementById("username").value = lockedHandle;
-    } else if (!lockedHandle) {
-        try {
-            localStorage.setItem(STORAGE_HANDLE_KEY, name);
-        } catch (e) {}
+    // 3. Kaart-sectie tonen + titel zetten
+    const cardSection = document.getElementById("card-section");
+    if (cardSection) {
+        cardSection.style.display = "block";
+    }
+    const ownerEl = document.getElementById("card-owner");
+    if (ownerEl) {
+        ownerEl.textContent = "Kaart voor: " + displayHandle;
     }
 
-    const displayHandle = name;
+    // 4. Kaart-ID onderin instellen (zelfde algoritme als host)
+    const cardIdEl = document.getElementById("cardIdSingle");
+    if (cardIdEl) {
+        cardIdEl.textContent = generateCardId(displayHandle);
+    }
+
+    // 5. Timestamp opslaan (of gewoon nieuwe tijd pakken)
+    let ts = new Date().toISOString();
+    try {
+        localStorage.setItem(STORAGE_TS_KEY, ts);
+    } catch (e) {
+        // als localStorage niet werkt, negeren we het gewoon
+    }
+
+    // 6. Timestamp tonen
+    const d = new Date(ts);
+    const formatted =
+        d.toLocaleDateString("nl-NL") + " " +
+        d.toLocaleTimeString("nl-NL", { hour: "2-digit", minute: "2-digit" });
+    const genEl = document.getElementById("gen-time");
+    if (genEl) {
+        genEl.textContent = formatted;
+    }
+
+    // 7. De drie rondes tekenen
+    for (let r = 1; r <= 3; r++) {
+        const numbers = getRoundNumbers(name, r);
+        const container = document.getElementById("round" + r);
+        if (!container) continue;
+
+        container.innerHTML = "";
+        for (let i = 0; i < 15; i++) {
+            const cell = document.createElement("div");
+            cell.className = "cell";
+            cell.textContent = numbers[i];
+
+            // speler kan eigen vakjes markeren
+            cell.addEventListener("click", () => {
+                cell.classList.toggle("marked");
+            });
+
+            container.appendChild(cell);
+        }
+    }
+}
+
 
     document.getElementById("card-section").style.display = "block";
     document.getElementById("card-owner").textContent = "Kaart voor: " + displayHandle;
