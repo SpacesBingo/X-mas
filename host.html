@@ -339,7 +339,7 @@ function checkBingo() {
         return;
     }
 
-    const cardNums = getRoundNumbers(handleInput, round);
+        const cardNums = getRoundNumbers(handleInput, round);
 
     const rows = [
         [0,1,2,3,4],
@@ -358,6 +358,13 @@ function checkBingo() {
         }
     });
 
+    // kaart-ID bepalen
+    const cardId = getCardId(handleInput, round);
+    const cardIdEl = document.getElementById("card-id");
+    if (cardIdEl) {
+        cardIdEl.textContent = "Kaart-ID: " + cardId;
+    }
+
     // teken kaart met kleurinfo
     drawHostCard(cardNums, drawnSet, fullRowIndices);
 
@@ -372,7 +379,7 @@ function checkBingo() {
     } else {
         resultEl.innerHTML = '<span class="ok">✅ VOLLE KAART! (3 lijnen) voor ' + handleDisplay + ' in ronde ' + round + '.</span>';
     }
-}
+
 
 // initialiseer grid bij laden
 initNumbersGrid();
