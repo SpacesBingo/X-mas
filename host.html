@@ -7,8 +7,6 @@
 
 <style>
     :root {
-
-
         --bg-main: #050b16;
         --bg-panel: #081724;
         --accent: #ff4b4b;
@@ -20,50 +18,53 @@
     }
 
     * {
-    box-sizing: border-box;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-}
-
+        box-sizing: border-box;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    }
 
     body {
-    margin: 0;
-    padding: 16px;
-    background: radial-gradient(circle at top, #122033 0%, #050b16 60%, #02040a 100%);
-    color: var(--text-main);
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-height: 100vh;
-}
+        margin: 0;
+        padding: 16px;
+        background: radial-gradient(circle at top, #122033 0%, #050b16 60%, #02040a 100%);
+        color: var(--text-main);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-height: 100vh;
+    }
 
     .panel {
-    width: 100%;
-    max-width: 1100px;
-    margin: 40px auto 60px;
-
-    background: var(--bg-panel);
-    padding: 32px 24px 36px;
-    border-radius: 26px;
-    border: 2px solid var(--accent-soft);
-    box-shadow: 0 25px 80px rgba(0,0,0,0.75);
-}
+        width: 100%;
+        max-width: 1100px;
+        margin: 40px auto 60px;
+        background: var(--bg-panel);
+        padding: 32px 24px 36px;
+        border-radius: 26px;
+        border: 2px solid var(--accent-soft);
+        box-shadow: 0 25px 80px rgba(0,0,0,0.75);
+    }
 
     h1 {
         margin: 0;
         text-align: center;
-        font-size: 1.6rem;
-        margin-bottom: 4px;
-    }
-    .subtitle {
-        text-align: center;
-        font-size: 0.85rem;
-        color: var(--text-soft);
-        margin-bottom: 20px;
+        font-size: 1.8rem;
+        margin-bottom: 6px;
     }
 
-    label { font-size: 0.85rem; color: var(--text-soft); }
-    input, select {
+    .subtitle {
+        text-align: center;
+        font-size: 0.9rem;
+        color: var(--text-soft);
+        margin-bottom: 24px;
+    }
+
+    label {
+        font-size: 0.85rem;
+        color: var(--text-soft);
+    }
+
+    input,
+    select {
         width: 100%;
         padding: 10px;
         border-radius: 10px;
@@ -71,51 +72,79 @@
         border: 1px solid #ffffff22;
         color: var(--text-main);
         margin-top: 4px;
-        margin-bottom: 12px;
     }
 
-    select { cursor: pointer; }
-
-    .card-id {
-        margin-bottom: 10px;
-        font-size: 0.9rem;
+    select {
+        cursor: pointer;
     }
-    .card-id span {
+
+    /* BOVENSTE RIJ: handle – ronde – kaart-id */
+    .row-fields {
+        display: flex;
+        gap: 16px;
+        margin-bottom: 20px;
+    }
+
+    .field {
+        flex: 1;
+    }
+
+    .card-id-box {
+        height: 40px;
+        border-radius: 10px;
+        border: 1px solid #ffffff22;
+        background: #0005;
+        display: flex;
+        align-items: center;
+        padding: 0 12px;
+        font-size: 0.95rem;
+    }
+
+    .card-id-box span {
         font-family: monospace;
         font-size: 1rem;
     }
 
+    /* BLIJKVLAK MET NUMMERS 1–75 */
+    .numbers-panel {
+        margin-top: 8px;
+        padding: 16px 18px 20px;
+        background: #0003;
+        border-radius: 18px;
+        border: 1px solid #ffffff22;
+    }
+
+    .numbers-title {
+        font-size: 0.9rem;
+        color: var(--text-soft);
+        margin-bottom: 10px;
+    }
+
     .number-grid {
-    display: grid;
-    grid-template-columns: repeat(10, minmax(0, 1fr));
-    gap: 4px;
-    margin-top: 16px;
-    margin-bottom: 18px;
-
-    /* NIEUW: maak het grid echt breed */
-    width: 100%;
-    max-width: 900px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
+        display: grid;
+        grid-template-columns: repeat(10, minmax(0, 1fr));
+        gap: 4px;
+        width: 100%;
+        max-width: 900px;
+        margin: 0 auto;
+    }
 
     .num {
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.2);
-    border-radius: 10px;
-    cursor: pointer;
-    color: #fff;
+        background: rgba(255,255,255,0.06);
+        border: 1px solid rgba(255,255,255,0.2);
+        border-radius: 10px;
+        cursor: pointer;
+        color: #fff;
 
-    height: 38px;          /* compact */
-    line-height: 38px;     /* centreren (mag blijven naast flex) */
-    font-size: 20px;       /* groter cijfer */
-    padding: 0;            /* geen extra lucht */
+        height: 38px;
+        line-height: 38px;
+        font-size: 20px;
+        padding: 0;
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 
     .num.selected {
         background: #00c878;
@@ -124,40 +153,65 @@
         font-weight: 700;
     }
 
+    /* KNOPPEN-RIJ */
+    .button-row {
+        display: flex;
+        gap: 16px;
+        margin-top: 18px;
+    }
+
     .btn {
         background: linear-gradient(90deg, #ff4b4b, #ff8c3c);
         color: #fff;
-        padding: 10px 16px;
+        padding: 11px 16px;
         border-radius: 999px;
         border: none;
         font-size: 1rem;
         cursor: pointer;
-        margin-bottom: 10px;
-        width: 100%;
         font-weight: 600;
         box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+        flex: 1;
+    }
+
+    .btn.secondary {
+        background: #444;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.6);
     }
 
     .result {
-        margin-top: 8px;
+        margin-top: 10px;
         font-size: 0.95rem;
+        min-height: 1.2em;
     }
-    .ok { color: var(--success); }
-    .fail { color: var(--danger); }
 
+    .ok {
+        color: var(--success);
+    }
+
+    .fail {
+        color: var(--danger);
+    }
+
+    /* KAART VAN DE SPELER */
     .player-card {
-        margin-top: 20px;
-        padding: 14px;
+        margin-top: 22px;
+        padding: 16px 18px 20px;
         background: #0003;
         border: 1px solid #ffffff22;
-        border-radius: 14px;
+        border-radius: 18px;
     }
+
+    .player-card strong {
+        font-size: 0.95rem;
+    }
+
     .player-card-grid {
         display: grid;
         grid-template-columns: repeat(5, 1fr);
         gap: 6px;
-        margin-top: 10px;
+        margin-top: 12px;
     }
+
     .cell {
         padding: 10px 0;
         background: rgba(255,255,255,0.07);
@@ -165,6 +219,7 @@
         border-radius: 8px;
         text-align: center;
     }
+
     .cell.marked {
         background: #00c878;
         color: #000;
@@ -173,67 +228,70 @@
 
     .footer {
         text-align: right;
-        margin-top: 12px;
+        margin-top: 14px;
         font-size: 0.75rem;
         color: var(--text-soft);
     }
 
-    .row-fields {
-        display: flex;
-        gap: 16px;
-        margin-bottom: 20px;
-}
+    /* Mobile fallback: boven elkaar */
+    @media (max-width: 768px) {
+        .row-fields {
+            flex-direction: column;
+        }
 
-    .field {
-        flex: 1;
-}
-    
+        .button-row {
+            flex-direction: column;
+        }
+    }
 </style>
 
 </head>
 <body>
-
-    <body>
 
 <div class="panel">
 
     <h1>Host controle – X-Mas Bingo 🎄</h1>
     <p class="subtitle">Controleer bingo op basis van @handle + ronde + getrokken nummers.</p>
 
+    <!-- Rij: handle – ronde – kaart-id -->
+    <div class="row-fields">
+        <div class="field">
+            <label>X @handle speler</label>
+            <input id="handleInput" placeholder="@naam">
+        </div>
 
-    <!-- kaart-id / grid / etc -->
+        <div class="field">
+            <label>Ronde</label>
+            <select id="roundSelect">
+                <option value="1">Ronde 1</option>
+                <option value="2">Ronde 2</option>
+                <option value="3">Ronde 3</option>
+            </select>
+        </div>
 
-</div>
-
-<div class="row-fields">
-
-    <div class="field">
-        <label>X @handle speler</label>
-        <input id="player" placeholder="@naam">
+        <div class="field">
+            <label>Kaart-ID</label>
+            <div class="card-id-box">
+                <span id="cardId">–</span>
+            </div>
+        </div>
     </div>
 
-    <div class="field">
-        <label>Ronde</label>
-        <select id="round">
-            <option>Ronde 1</option>
-            <option>Ronde 2</option>
-            <option>Ronde 3</option>
-        </select>
+    <!-- Groot vlak met nummers 1–75 -->
+    <div class="numbers-panel">
+        <div class="numbers-title">Klik nummers die getrokken zijn (1-75):</div>
+        <div class="number-grid" id="numGrid"></div>
     </div>
 
-</div>
-
-    <div class="card-id">Kaart-ID: <span id="cardId">–</span></div>
-
-    <label>Klik nummers die getrokken zijn (1-75):</label>
-    <div class="number-grid" id="numGrid"></div>
-
-    <button class="btn" id="checkBtn">Controleer bingo</button>
-<button class="btn" id="resetBtn" style="background:#444; margin-left:10px;">Reset getrokken nummers</button>
-
+    <!-- Knoppen naast elkaar -->
+    <div class="button-row">
+        <button class="btn" id="checkBtn">Controleer bingo</button>
+        <button class="btn secondary" id="resetBtn">Reset getrokken nummers</button>
+    </div>
 
     <div id="result" class="result"></div>
 
+    <!-- Kaart van speler -->
     <div class="player-card">
         <strong>Kaart van speler</strong>
         <div id="playerGrid" class="player-card-grid"></div>
@@ -243,9 +301,7 @@
 
 </div>
 
-
 <script>
-
 function resetSelections() {
     // 1. Reset alle geselecteerde nummers
     const grid = document.getElementById("numGrid");
@@ -269,8 +325,6 @@ function resetSelections() {
     }
 }
 
-
-    
 /* ---------------- RNG voor vaste kaart per speler ---------------- */
 function cyrb128(str) {
     let h1 = 1779033703, h2 = 3144134277, h3 = 1013904242, h4 = 2773480762;
@@ -287,6 +341,7 @@ function cyrb128(str) {
     h4 = Math.imul(h2 ^ (h4>>>19), 2716044179);
     return [(h1^h2^h3^h4)>>>0];
 }
+
 function makeRng(seed){
     return function(){
         seed |= 0; seed = (seed + 0x6D2B79F5) | 0;
@@ -345,7 +400,7 @@ function checkBingo(cardNums, drawnNums, round) {
 /* ---------- Controleknop ---------- */
 document.getElementById("checkBtn").onclick = () => {
     const handle = document.getElementById("handleInput").value.trim();
-    const round = parseInt(document.getElementById("roundSelect").value);
+    const round = parseInt(document.getElementById("roundSelect").value, 10);
     const resultBox = document.getElementById("result");
 
     if (!handle){
@@ -356,7 +411,7 @@ document.getElementById("checkBtn").onclick = () => {
 
     document.getElementById("cardId").textContent = generateCardID(handle);
 
-    const selected = [...document.querySelectorAll(".num.selected")].map(n => parseInt(n.textContent));
+    const selected = [...document.querySelectorAll(".num.selected")].map(n => parseInt(n.textContent, 10));
     if (selected.length === 0){
         resultBox.textContent = "Selecteer getrokken nummers.";
         resultBox.className = "result fail";
@@ -393,19 +448,15 @@ document.getElementById("checkBtn").onclick = () => {
     }
 };
 
-    /* --- Reset-knop activeren --- */
+/* --- Reset-knop activeren --- */
 document.getElementById("resetBtn").onclick = () => {
     resetSelections();
 };
-
 
 /* --- Automatisch resetten bij veranderen van ronde --- */
 document.getElementById("roundSelect").addEventListener("change", () => {
     resetSelections();
 });
-
-
-    
 </script>
 
 </body>
