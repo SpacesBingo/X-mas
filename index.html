@@ -78,3 +78,404 @@
     label {
         display: block;
         font-size: 13px;
+        margin-bottom: 6px;
+    }
+
+    input {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 10px;
+        border: 1px solid rgba(255,255,255,0.25);
+        background: #02141f;
+        color: #fff;
+        font-size: 14px;
+        outline: none;
+    }
+
+    input::placeholder {
+        color: rgba(255,255,255,0.4);
+    }
+
+    .button-wrap {
+        margin-top: 10px;
+    }
+
+    button {
+        padding: 10px 16px;
+        border-radius: 999px;
+        border: none;
+        font-size: 14px;
+        font-weight: 600;
+        color: #fff;
+        cursor: pointer;
+        background-image: linear-gradient(90deg, #ff3b3b, #ff9100);
+        box-shadow: 0 8px 18px rgba(0,0,0,0.7);
+        transition: transform 0.08s ease, box-shadow 0.08s ease, filter 0.08s ease;
+    }
+
+    button:hover {
+        filter: brightness(1.05);
+        transform: translateY(-1px);
+        box-shadow: 0 10px 22px rgba(0,0,0,0.85);
+    }
+
+    .hint {
+        margin-top: 6px;
+        font-size: 11px;
+        opacity: 0.78;
+    }
+
+    .divider {
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent);
+        margin: 16px 0 12px;
+    }
+
+    #card-info {
+        text-align: center;
+        margin-bottom: 10px;
+    }
+
+    #card-owner {
+        font-size: 15px;
+        font-weight: 600;
+        margin-bottom: 4px;
+    }
+
+    #card-info small {
+        font-size: 12px;
+        opacity: 0.85;
+        display: block;
+    }
+
+    .round-wrapper {
+        margin-bottom: 12px;
+        padding: 10px 10px 12px;
+        border-radius: 14px;
+        border: 1px solid rgba(255,255,255,0.15);
+        background: rgba(2,18,27,0.9);
+    }
+
+    .round1 {
+        border-color: rgba(239, 68, 68, 0.9);
+        box-shadow: 0 0 14px rgba(239,68,68,0.35);
+    }
+    .round2 {
+        border-color: rgba(34, 197, 94, 0.9);
+        box-shadow: 0 0 14px rgba(34,197,94,0.35);
+    }
+    .round3 {
+        border-color: rgba(250, 204, 21, 0.9);
+        box-shadow: 0 0 14px rgba(250,204,21,0.35);
+    }
+
+    .round-title {
+        margin: 0 0 6px;
+        font-size: 13px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .round-badge {
+        font-size: 11px;
+        opacity: 0.85;
+    }
+
+    .round-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 4px;
+    }
+
+    .cell {
+        aspect-ratio: 1 / 1;
+        border-radius: 10px;
+        border: 1px solid rgba(255,255,255,0.3);
+        background: #041824;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        box-shadow: 0 3px 8px rgba(0,0,0,0.5);
+        user-select: none;
+        transition: transform 0.08s ease, box-shadow 0.08s ease, filter 0.08s ease;
+    }
+
+    .round1 .cell { border-color: rgba(239, 68, 68, 0.35); }
+    .round2 .cell { border-color: rgba(34, 197, 94, 0.35); }
+    .round3 .cell { border-color: rgba(250, 204, 21, 0.35); }
+
+    @media (hover: hover) and (pointer: fine) {
+        .cell:hover {
+            filter: brightness(1.08);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.8);
+        }
+    }
+
+    .cell.marked {
+        background: #f97316;
+        color: #000;
+        border-color: #fed7aa;
+        box-shadow: 0 0 8px rgba(249,115,22,0.9);
+        font-weight: 600;
+    }
+
+    #card-section {
+        display: none;
+        position: relative;
+        z-index: 1;
+    }
+
+    #card-footer {
+        margin-top: 18px;
+        text-align: center;
+        font-size: 12px;
+        opacity: 0.75;
+        padding-bottom: 10px;
+    }
+
+    @media (max-width: 480px) {
+        body {
+            padding: 12px 6px 24px;
+            align-items: flex-start;
+            justify-content: flex-start;
+        }
+        .panel {
+            padding: 18px 12px 20px;
+            border-radius: 18px;
+        }
+        .panel h1 {
+            font-size: 20px;
+        }
+        .subtitle {
+            font-size: 12px;
+        }
+        .round-grid {
+            gap: 3px;
+        }
+        .cell {
+            font-size: 15px;
+        }
+    }
+</style>
+</head>
+<body>
+
+<div class="panel">
+    <div class="panel-header">
+        <h1>Keek op de Week presenteert: X-Mas Bingo 🎄</h1>
+        <p class="subtitle">1 link · 1 kaart per @handle · 3 rondes</p>
+    </div>
+
+    <div class="form-block">
+        <label for="username">Speler: vul je X @handle in</label>
+        <input id="username" placeholder="@jouwnaam">
+        <div class="button-wrap">
+            <button onclick="generate()">Geef mij mijn bingokaart</button>
+        </div>
+        <p class="hint">
+            Je krijgt 1 vaste bingokaart per @handle.<br>
+            Gebruik dezelfde @handle om je kaart terug te halen. (Tip: maak een screenshot).
+        </p>
+    </div>
+
+    <div id="card-section">
+        <div class="divider"></div>
+
+        <div id="card-info">
+            <div id="card-owner">Kaart voor: @handle</div>
+            <small>
+                Deze kaart is alleen geldig voor deze @handle.<br>
+                Gebruik dezelfde @handle bij het claimen van bingo.<br>
+                (Tip: tik op een vakje om getrokken nummers te markeren.)<br>
+            </small>
+        </div>
+
+        <div class="round-wrapper round1">
+            <div class="round-title">
+                <span>Ronde 1</span>
+                <span class="round-badge">🔥 Eerste ronde</span>
+            </div>
+            <div id="round1" class="round-grid"></div>
+        </div>
+
+        <div class="round-wrapper round2">
+            <div class="round-title">
+                <span>Ronde 2</span>
+                <span class="round-badge">🎄 Mid-game</span>
+            </div>
+            <div id="round2" class="round-grid"></div>
+        </div>
+
+        <div class="round-wrapper round3">
+            <div class="round-title">
+                <span>Ronde 3</span>
+                <span class="round-badge">⭐ Finale ronde</span>
+            </div>
+            <div id="round3" class="round-grid"></div>
+        </div>
+
+        <div id="card-footer">
+            Gegenereerd op: <span id="gen-time"></span>
+            · Kaart-ID: <span id="cardIdSingle">–</span>
+            · © spacesbingo
+        </div>
+
+    </div>
+</div>
+
+<script>
+/* ---------- RNG / kaartgenerator ---------- */
+function hashString(str) {
+    let h = 0;
+    for (let i = 0; i < str.length; i++) {
+        h = (h * 31 + str.charCodeAt(i)) | 0;
+    }
+    return Math.abs(h) || 1;
+}
+
+function makeRng(seed) {
+    let s = seed % 2147483647;
+    if (s <= 0) s += 2147483646;
+    return function () {
+        s = (s * 16807) % 2147483647;
+        return (s - 1) / 2147483646;
+    };
+}
+
+function getRoundNumbers(handle, roundIndex) {
+    let cleaned = handle.trim();
+    if (cleaned.startsWith("@")) {
+        cleaned = cleaned.slice(1);
+    }
+    cleaned = cleaned.toLowerCase();
+
+    const baseSeed = hashString(cleaned);
+    const rng = makeRng(baseSeed);
+
+    const SKIP_PER_ROUND = 30;
+    for (let i = 0; i < (roundIndex - 1) * SKIP_PER_ROUND; i++) {
+        rng();
+    }
+
+    const nums = [];
+    while (nums.length < 15) {
+        const n = Math.floor(rng() * 75) + 1;
+        if (!nums.includes(n)) nums.push(n);
+    }
+    return nums;
+}
+
+/* ---------- Kaart-ID: één ID per kaart (alle 3 rondes) ---------- */
+function cyrb128(str) {
+    let h1 = 1779033703, h2 = 3144134277,
+        h3 = 1013904242, h4 = 2773480762;
+    for (let i = 0, k; i < str.length; i++) {
+        k = str.charCodeAt(i);
+        h1 = h2 ^ Math.imul(h1 ^ k, 597399067);
+        h2 = h3 ^ Math.imul(h2 ^ k, 2869860233);
+        h3 = h4 ^ Math.imul(h3 ^ k, 951274213);
+        h4 = h1 ^ Math.imul(h4 ^ k, 2716044179);
+    }
+    h1 = Math.imul(h3 ^ (h1 >>> 18), 597399067);
+    h2 = Math.imul(h4 ^ (h2 >>> 22), 2869860233);
+    h3 = Math.imul(h1 ^ (h3 >>> 17), 951274213);
+    h4 = Math.imul(h2 ^ (h4 >>> 19), 2716044179);
+    return [(h1 ^ h2 ^ h3 ^ h4) >>> 0];
+}
+
+function generateCardId(handle) {
+    const base = (handle || "").trim().toLowerCase();
+    if (!base) return "–";
+
+    const key = base + "::card";   // zelfde voor alle 3 rondes
+    const [seed] = cyrb128(key);
+    const short = (seed % 1000000).toString().padStart(6, "0");
+    return "SB-" + short;
+}
+
+/* ---------- kaart genereren ---------- */
+function generate() {
+    const STORAGE_HANDLE_KEY = "spacesbingo-locked-handle";
+    const STORAGE_TS_KEY = "spacesbingo-card-timestamp";
+
+    let name = document.getElementById("username").value.trim();
+
+    if (!name) {
+        alert("Vul je X @handle in!");
+        return;
+    }
+    if (!name.startsWith("@")) {
+        alert("Je handle moet beginnen met @. Voorbeeld: @jouwnaam");
+        return;
+    }
+
+    let lockedHandle = null;
+    try {
+        lockedHandle = localStorage.getItem(STORAGE_HANDLE_KEY);
+    } catch (e) {}
+
+    if (lockedHandle && lockedHandle !== name) {
+        alert(
+            "Op dit apparaat is al een kaart vergrendeld voor " +
+            lockedHandle +
+            ". Je krijgt nu die kaart te zien. Je kunt op dit apparaat geen andere @handle gebruiken."
+        );
+        name = lockedHandle;
+        document.getElementById("username").value = lockedHandle;
+    } else if (!lockedHandle) {
+        try {
+            localStorage.setItem(STORAGE_HANDLE_KEY, name);
+        } catch (e) {}
+    }
+
+    const displayHandle = name;
+
+    document.getElementById("card-section").style.display = "block";
+    document.getElementById("card-owner").textContent = "Kaart voor: " + displayHandle;
+
+    // Kaart-ID onderin
+    const cardIdEl = document.getElementById("cardIdSingle");
+    cardIdEl.textContent = generateCardId(displayHandle);
+
+    let ts = null;
+    try {
+        ts = localStorage.getItem(STORAGE_TS_KEY);
+        if (!ts) {
+            ts = new Date().toISOString();
+            localStorage.setItem(STORAGE_TS_KEY, ts);
+        }
+    } catch (e) {
+        ts = new Date().toISOString();
+    }
+
+    if (ts) {
+        const d = new Date(ts);
+        const formatted =
+            d.toLocaleDateString("nl-NL") + " " +
+            d.toLocaleTimeString("nl-NL", { hour: "2-digit", minute: "2-digit" });
+        document.getElementById("gen-time").textContent = formatted;
+    }
+
+    for (let r = 1; r <= 3; r++) {
+        const numbers = getRoundNumbers(name, r);
+        const container = document.getElementById("round" + r);
+        container.innerHTML = "";
+        for (let i = 0; i < 15; i++) {
+            const cell = document.createElement("div");
+            cell.className = "cell";
+            cell.textContent = numbers[i];
+            cell.addEventListener("click", () => {
+                cell.classList.toggle("marked");
+            });
+            container.appendChild(cell);
+        }
+    }
+}
+</script>
+
+</body>
+</html>
