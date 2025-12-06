@@ -393,11 +393,14 @@ function getRoundNumbers(handle, roundIndex) {
 
 // spelerkaart tekenen
 function generate() {
+    const STORAGE_HANDLE_KEY = "spacesbingo-locked-handle";
+    const STORAGE_TS_KEY = "spacesbingo-card-timestamp";
+
     let name = document.getElementById("username").value.trim();
 
     // leeg?
     if (!name) {
-        alert("Vul je Twitter @handle in!");
+        alert("Vul je X @handle in!");
         return;
     }
     // verplicht met @ beginnen
@@ -406,30 +409,84 @@ function generate() {
         return;
     }
 
+    // check of er al een vergrendelde kaart is op dit apparaat
+    let lockedHandle = null;
+    try {
+        lockedHandle = localStorage.getItem(STORAGE_HANDLE_KEY);
+    } catch (e) {
+        // als localStorage geblokkeerd is, doen we gewoon zonder lock
+    }
+
+    if (lockedHandle && lockedHandle !== name) {
+        // speler probeert andere handle te gebruiken dan de eerder vergrendelde
+        alert(
+            "Op dit apparaat is al een kaart vergrendeld voor " +
+            lockedHandle +
+            ". Je krijgt nu die kaart te zien. Je kunt op dit apparaat geen andere @handle gebruiken."
+        );
+        name = lockedHandle;
+        // input veld ook terugzetten
+        document.getElementById("username").value = lockedHandle;
+    } else if (!lockedHandle) {
+        // nog geen lock → nu vergrendelen op deze handle
+        try {
+            localStorage.setItem(STORAGE_HANDLE_KEY, name);
+        } catch (e) {
+            // als het niet lukt, negeren we het (kaart werkt verder gewoon)
+        }
+    }
+
     const displayHandle = name;
 
     document.getElementById("card-section").style.display = "block";
     document.getElementById("card-owner").textContent = "Kaart voor: " + displayHandle;
 
-    for (let r = 1; r <= 3; r++) {
-    const numbers = getRoundNumbers(name, r);
-    const container = document.getElementById("round" + r);
-    container.innerHTML = "";
-    for (let i = 0; i < 15; i++) {
-        const cell = document.createElement("div");
-        cell.className = "cell";
-        cell.textContent = numbers[i];
-
-        // deelnemer kan eigen nummer “afstrepen”
-        cell.addEventListener("click", () => {
-            cell.classList.toggle("marked");
-        });
-
-        container.appendChild(cell);
+    // timestamp ophalen of aanmaken
+    let ts = null;
+    try {
+        ts = localStorage.getItem(STORAGE_TS_KEY);
+        if (!ts) {
+            ts = new Date().toISOString();
+            localStorage.setItem(STORAGE_TS_KEY, ts);
+        }
+    } catch (e) {
+        // localStorage niet beschikbaar? gebruik alleen memory
+        ts = new Date().toISOString();
     }
-  }
 
+    // timestamp mooi tonen (NL formaat)
+    if (ts) {
+        const d = new Date(ts);
+        const formatted =
+            d.toLocaleDateString("nl-NL") +
+            " " +
+            d.toLocaleTimeString("nl-NL", { hour: "2-digit", minute: "2-digit" });
+        const tsEl = document.getElementById("card-timestamp-line");
+        if (tsEl) {
+            tsEl.textContent = "Gegenereerd op: " + formatted;
+        }
+    }
+
+    // nu de drie rondes tekenen
+    for (let r = 1; r <= 3; r++) {
+        const numbers = getRoundNumbers(name, r);
+        const container = document.getElementById("round" + r);
+        container.innerHTML = "";
+        for (let i = 0; i < 15; i++) {
+            const cell = document.createElement("div");
+            cell.className = "cell";
+            cell.textContent = numbers[i];
+
+            // deelnemer kan eigen nummer “afstrepen”
+            cell.addEventListener("click", () => {
+                cell.classList.toggle("marked");
+            });
+
+            container.appendChild(cell);
+        }
+    }
 }
+
 </script>
 
 </body>
