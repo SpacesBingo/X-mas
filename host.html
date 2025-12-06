@@ -142,7 +142,7 @@
       flex-wrap: wrap;
     }
 
-        .card-id-row {
+    .card-id-row {
       margin-top: 10px;
       margin-bottom: 6px;
       display: flex;
@@ -161,7 +161,6 @@
       font-weight: 600;
       color: #ffffff;
     }
-
 
     .btn-primary {
       border: none;
@@ -249,13 +248,12 @@
     }
 
     .host-number-btn.selected {
-  background: rgba(0, 200, 120, 0.9);
-  border-color: rgba(0, 0, 0, 0.7);
-  color: #ffffff;              /* >>> cijfers altijd wit */
-  font-weight: 700;
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.6);
-}
-
+      background: rgba(0, 200, 120, 0.9);
+      border-color: rgba(0, 0, 0, 0.7);
+      color: #ffffff;
+      font-weight: 700;
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.6);
+    }
 
     /* Kaart van speler */
     .player-card-wrapper {
@@ -337,12 +335,11 @@
       </div>
     </div>
 
-        <!-- Kaart-ID van de speler -->
+    <!-- Kaart-ID van de speler -->
     <div class="card-id-row">
       <span class="card-id-label">Kaart-ID:</span>
       <span id="cardIdValue" class="card-id-value">–</span>
     </div>
-
 
     <div class="field-group" style="margin-top: 14px;">
       <label for="drawnNumbersInput">Getrokken nummers (tot en met het bingonummer)</label>
@@ -436,7 +433,10 @@
         [pool[i], pool[j]] = [pool[j], pool[i]];
       }
 
-          // Maak een korte, leesbare kaart-ID op basis van handle + ronde
+      return pool.slice(0, 15).sort((a, b) => a - b);
+    }
+
+    // Kaart-ID (zelfde algoritme gebruiken we op index.html)
     function generateCardId(handle, round) {
       const base = (handle || "").trim().toLowerCase();
       if (!base) return "–";
@@ -444,10 +444,7 @@
       const key = base + "::" + round;
       const [seed] = cyrb128(key);
 
-      // korte code uit het seed-getal
-      const short = (seed % 1000000).toString().padStart(6, "0"); // altijd 6 cijfers
-
-      // Prefix "SB" = SpacesBingo, plus ronde
+      const short = (seed % 1000000).toString().padStart(6, "0"); // 6 cijfers
       return "SB-" + round + "-" + short;
     }
 
@@ -466,10 +463,6 @@
       }
 
       cardIdEl.textContent = generateCardId(handle, round);
-    }
-
-
-      return pool.slice(0, 15).sort((a, b) => a - b);
     }
 
     /*********************************************************
@@ -517,7 +510,7 @@
     function syncGridFromInput(grid, drawnInput) {
       const raw = drawnInput.value;
       const nums = raw
-        .split(/[\s,;,]+/)
+        .split(/[\s,;]+/)
         .map(x => parseInt(x, 10))
         .filter(n => !isNaN(n));
 
@@ -599,7 +592,7 @@
       }
     }
 
-        /*********************************************************
+    /*********************************************************
      *  Init
      *********************************************************/
     document.addEventListener('DOMContentLoaded', () => {
@@ -624,7 +617,7 @@
         roundSelect.addEventListener('change', updateCardIdDisplay);
       }
 
-      // direct bij load alvast proberen een ID te tonen (meestal nog "-")
+      // direct bij load alvast proberen een ID te tonen
       updateCardIdDisplay();
 
       const ts = new Date();
@@ -639,7 +632,6 @@
 
       document.getElementById('generatedAt').textContent = stamp;
     });
-
   </script>
 </body>
 </html>
