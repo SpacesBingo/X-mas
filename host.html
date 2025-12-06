@@ -191,6 +191,32 @@
 
 
 <script>
+
+function resetSelections() {
+    // 1. Reset alle geselecteerde nummers
+    const grid = document.getElementById("numGrid");
+    if (grid) {
+        grid.querySelectorAll(".num.selected").forEach(btn => {
+            btn.classList.remove("selected");
+        });
+    }
+
+    // 2. Clear resultaat
+    const result = document.getElementById("result");
+    if (result) {
+        result.textContent = "";
+        result.className = "result";
+    }
+
+    // 3. Leeg getekende kaart
+    const playerGrid = document.getElementById("playerGrid");
+    if (playerGrid) {
+        playerGrid.innerHTML = "";
+    }
+}
+
+
+    
 /* ---------------- RNG voor vaste kaart per speler ---------------- */
 function cyrb128(str) {
     let h1 = 1779033703, h2 = 3144134277, h3 = 1013904242, h4 = 2773480762;
