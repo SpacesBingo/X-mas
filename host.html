@@ -358,6 +358,58 @@
 </div>
 
 <script>
+// --- Inputs en kaartvak ---
+const handleInput = document.getElementById("handleInput");
+const roundSelect = document.getElementById("roundSelect");
+const playerGrid  = document.getElementById("playerGrid");
+
+    // Tijdelijke lege kaartfunctie — voorkomt errors
+function getCardNumbersFor(handle, round) {
+    return []; 
+}
+
+
+// Hulpfunctie om kaart te tonen in "Kaart van speler"
+function renderPlayerGrid(numbers) {
+    playerGrid.innerHTML = "";
+    if (!numbers || numbers.length === 0) return;
+
+    numbers.forEach((n) => {
+        const cell = document.createElement("div");
+        cell.className = "player-card-cell";
+        cell.textContent = n === 0 ? "" : n; // evt. vrij middenvak
+        playerGrid.appendChild(cell);
+    });
+}
+
+// Haal kaart op voor huidige handle + ronde
+function updatePlayerCardForCurrentHandle() {
+    const handle = handleInput.value.trim();
+    const round  = parseInt(roundSelect.value, 10);
+
+    if (!handle) {
+        playerGrid.innerHTML = "";
+        return;
+    }
+
+    // 🔴 Deze moet je koppelen aan jouw kaart-generator
+    const numbers = getCardNumbersFor(handle, round);
+
+    renderPlayerGrid(numbers);
+}
+
+// Triggers: handle invullen / enter / ronde wijzigen
+handleInput.addEventListener("change", updatePlayerCardForCurrentHandle);
+handleInput.addEventListener("blur", updatePlayerCardForCurrentHandle);
+handleInput.addEventListener("keyup", (e) => {
+    if (e.key === "Enter") {
+        updatePlayerCardForCurrentHandle();
+    }
+});
+
+roundSelect.addEventListener("change", updatePlayerCardForCurrentHandle);
+
+
 function resetSelections() {
     // 1. Reset alle geselecteerde nummers
     const grid = document.getElementById("numGrid");
@@ -474,6 +526,9 @@ document.getElementById("checkBtn").onclick = () => {
     const handle = document.getElementById("handleInput").value.trim();
     const round = parseInt(document.getElementById("roundSelect").value, 10);
     const resultBox = document.getElementById("result");
+    
+    updatePlayerCardForCurrentHandle();
+
 
     if (!handle){
         resultBox.textContent = "Vul een @handle in.";
