@@ -172,13 +172,50 @@
         .round {
             flex: 1;
         }
+
+       .header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.header-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0;
+  color: #fff;
+}
+
+.header-qr img {
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: 0.2s;
+}
+
+.header-qr img:hover {
+  transform: scale(1.08);
+  filter: drop-shadow(0 0 4px rgba(255,255,255,0.5));
+}
+
     }
 </style>
 </head>
 <body>
 
 <div class="panel">
-    <h1>Keek op de Week – X-Mas Bingo 🎄</h1>
+   
+ <div class="header-row">
+    <h1 class="header-title">Keek op de Week – X-Mas Bingo 🎄</h1>
+    <div class="header-qr">
+        <a href="QR/index.html">
+            <img src="QR/qr.png" alt="QR">
+        </a>
+    </div>
+</div>
+
     <p class="subtitle">Deze kaart hoort bij jouw X @handle.<br>
                 Gebruik dezelfde @handle als je bingo claimt.</p>
 
