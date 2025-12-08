@@ -213,6 +213,54 @@
   filter: drop-shadow(0 0 4px rgba(255,255,255,0.5));
 }
 
+
+/* Nieuwe gecentreerde titel + grote QR zoals schets */
+
+.header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.title-block {
+    flex: 1;
+    text-align: center;
+}
+
+.header-title {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.subtitle {
+    font-size: 14px;
+    opacity: 0.85;
+    margin-top: 4px;
+}
+
+.qr-large {
+    width: 130px;   /* QR GROOT */
+    height: 130px;
+    object-fit: contain;
+    border-radius: 12px;
+}
+
+/* Mobiel: alles onder elkaar */
+@media (max-width: 768px) {
+    .header-row {
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .qr-large {
+        width: 110px;
+        height: 110px;
+    }
+}     
+
     }
 </style>
 </head>
@@ -221,13 +269,19 @@
 <div class="panel">
    
  <div class="header-row">
-    <h1 class="header-title">Keek op de Week – X-Mas Bingo 🎄</h1>
+    <div class="title-block">
+        <h1 class="header-title">Keek op de Week – X-Mas Bingo 🎄</h1>
+        <p class="subtitle">Deze kaart hoort bij jouw X @handle.<br>
+        Gebruik dezelfde @handle als je bingo claimt.</p>
+    </div>
+
     <div class="header-qr">
         <a href="QR/index.html">
-            <img src="QR/qr.png" alt="QR">
+            <img src="QR/qr.png" alt="QR" class="qr-large">
         </a>
     </div>
 </div>
+>
 
     <p class="subtitle">Deze kaart hoort bij jouw X @handle.<br>
                 Gebruik dezelfde @handle als je bingo claimt.</p>
