@@ -248,18 +248,23 @@
     border-radius: 12px;
 }
 
-/* Mobiel: alles onder elkaar */
+       /* Verberg QR op mobiel */
+/* Mobiel layout + QR verbergen */
 @media (max-width: 768px) {
+
+    /* Verberg QR */
+    .header-qr {
+        display: none;
+    }
+
+    /* Titel/subtitle netjes gecentreerd onder elkaar */
     .header-row {
         flex-direction: column;
         gap: 16px;
     }
 
-    .qr-large {
-        width: 110px;
-        height: 110px;
-    }
-}     
+}
+
 
     }
 </style>
