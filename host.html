@@ -363,10 +363,12 @@ const handleInput = document.getElementById("handleInput");
 const roundSelect = document.getElementById("roundSelect");
 const playerGrid  = document.getElementById("playerGrid");
 
-    // Tijdelijke lege kaartfunctie — voorkomt errors
-function getCardNumbersFor(handle, round) {
-    return []; 
+   function getCardNumbersFor(handle, round) {
+    handle = handle.trim();
+    if (!handle) return [];
+    return generateCard(handle, round);   // gebruik dezelfde generator als bij controle
 }
+
 
 
 // Hulpfunctie om kaart te tonen in "Kaart van speler"
@@ -376,11 +378,12 @@ function renderPlayerGrid(numbers) {
 
     numbers.forEach((n) => {
         const cell = document.createElement("div");
-        cell.className = "player-card-cell";
-        cell.textContent = n === 0 ? "" : n; // evt. vrij middenvak
+        cell.className = "cell";   // zelfde stijl als bij controle
+        cell.textContent = n;
         playerGrid.appendChild(cell);
     });
 }
+
 
 // Haal kaart op voor huidige handle + ronde
 function updatePlayerCardForCurrentHandle() {
@@ -585,12 +588,15 @@ document.getElementById("roundSelect").addEventListener("change", () => {
     resetSelections();
 });
 
-// Kaart-ID meteen updaten terwijl je typt
-document.getElementById("handleInput").addEventListener("input", updateCardIdFromHandle);
+// Kaart-ID én kaart van speler meteen updaten terwijl je typt
+document.getElementById("handleInput").addEventListener("input", () => {
+    updateCardIdFromHandle();
+    updatePlayerCardForCurrentHandle();
+});
 
-
-// Kaart-ID ook direct tonen bij pagina-laden
+// Bij laden alvast leeg/vooraf ingevuld goedzetten
 updateCardIdFromHandle();
+updatePlayerCardForCurrentHandle();
 
 
     
