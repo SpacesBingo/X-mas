@@ -79,46 +79,50 @@
         cursor: pointer;
     }
 
-    /* BOVENSTE RIJ: handle – ronde – kaart-id */
-    .row-fields {
-        display: flex;
-        gap: 16px;
-        margin-bottom: 18px;
-    }
-
-    .field {
-        flex: 1;
-    }
-
-    .card-id-box {
-        height: 40px;
-        border-radius: 10px;
-        border: 1px solid #ffffff22;
-        background: #0005;
+    /* BOVENSTE RIJ: titel + handle/ronde/kaart-id */
+    .header-row {
         display: flex;
         align-items: center;
-        padding: 0 12px;
-        font-size: 0.75rem;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 16px;
     }
 
-    .card-id-box span {
-        font-family: monospace;
+    .header-row h1 {
+        margin: 0;
+        font-size: 1.1rem;
+        font-weight: 400;
+    }
+
+    .top-inputs {
+        display: flex;
+        flex: 1;
+        gap: 12px;
+    }
+
+    .top-inputs input,
+    .top-inputs select {
+        flex: 1;
+        padding: 8px 10px;
         font-size: 0.85rem;
+        border-radius: 8px;
+        background: #0005;
+        color: var(--text-main);
+        border: 1px solid #ffffff22;
     }
 
-    /* BLIJKVLAK MET NUMMERS 1–75 */
+    #cardId {
+        text-align: center;
+        opacity: 0.7;
+    }
+
+    /* VLAK MET NUMMERS 1–75 */
     .numbers-panel {
         margin-top: 8px;
         padding: 12px 14px 14px;
         background: #0003;
         border-radius: 18px;
         border: 1px solid #ffffff22;
-    }
-
-    .numbers-title {
-        font-size: 0.9rem;
-        color: var(--text-soft);
-        margin-bottom: 10px;
     }
 
     .number-grid {
@@ -136,12 +140,10 @@
         border-radius: 8px;
         cursor: pointer;
         color: #fff;
-
         height: 30px;
         line-height: 30px;
         font-size: 16px;
         padding: 0;
-
         display: flex;
         align-items: center;
         justify-content: center;
@@ -167,7 +169,7 @@
         padding: 8px 12px;
         border-radius: 20px;
         border: none;
-        font-size: 0,9rem;
+        font-size: 0.9rem;
         cursor: pointer;
         font-weight: 600;
         box-shadow: 0 5px 20px rgba(0,0,0,0.5);
@@ -183,6 +185,7 @@
         margin-top: 10px;
         font-size: 0.95rem;
         min-height: 1.2em;
+        white-space: pre-line; /* zorgt dat \n op nieuwe regels komt */
     }
 
     .ok {
@@ -236,79 +239,20 @@
         color: var(--text-soft);
     }
 
-   .header-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between; /* titel links, velden rechts */
-    gap: 16px;
-    margin-bottom: 16px;
-}
-
-/* Titel staat boven inputrij */
-.header-row h1 {
-    margin: 0;
-    font-size: 1.1rem;
-    font-weight: 400;
-}
-
-/* De inputvelden in één rij */
-.top-inputs {
-    display: flex;
-    flex: 1;          /* neemt alle ruimte rechts van de titel */
-    gap: 12px;
-}
-
-
-/* Compactere, label-loze velden */
-.top-inputs input,
-.top-inputs select {
-    flex: 1;
-    padding: 8px 10px;
-    font-size: 0.85rem;
-    border-radius: 8px;
-    background: #0005;
-    color: var(--text-main);
-    border: 1px solid #ffffff22;
-}
-
-/* Kaart-ID stijl */
-#cardId {
-    text-align: center;
-    opacity: 0.7;
-}
-
-
-    /* Mobile fallback: boven elkaar */
-    @media (max-width: 768px) {
-        .row-fields {
+    @media (max-width: 800px) {
+        .header-row {
             flex-direction: column;
+            align-items: stretch;
+        }
+
+        .top-inputs {
+            width: 100%;
         }
 
         .button-row {
             flex-direction: column;
         }
     }
-
-
-    
-@media (max-width: 800px) {
-    .header-row {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .top-inputs {
-        width: 100%;
-    }
-}
-
-
-
-
-
-
-
-    
 </style>
 
 </head>
@@ -317,37 +261,30 @@
 <div class="panel">
 
     <div class="header-row">
-    <h1>Host controle – X-Mas Bingo 🎄</h1>
-
-    <div class="top-inputs">
-        <input id="handleInput" placeholder="@handle">
-
-        <select id="roundSelect">
-            <option value="1">Ronde 1</option>
-            <option value="2">Ronde 2</option>
-            <option value="3">Ronde 3</option>
-        </select>
-
-        <input id="cardId" disabled placeholder="—">
+        <h1>Host controle – X-Mas Bingo 🎄</h1>
+        <div class="top-inputs">
+            <input id="handleInput" placeholder="@handle">
+            <select id="roundSelect">
+                <option value="1">Ronde 1</option>
+                <option value="2">Ronde 2</option>
+                <option value="3">Ronde 3</option>
+            </select>
+            <input id="cardId" disabled placeholder="—">
+        </div>
     </div>
-</div>
 
-
-    <!-- Groot vlak met nummers 1–75 -->
     <div class="numbers-panel">
-        
         <div class="number-grid" id="numGrid"></div>
     </div>
 
-    <!-- Knoppen naast elkaar -->
     <div class="button-row">
         <button class="btn" id="checkBtn">Controleer bingo</button>
         <button class="btn secondary" id="resetBtn">Reset getrokken nummers</button>
     </div>
 
     <div id="result" class="result"></div>
+    <div id="autoBingoResult" class="result"></div>
 
-    <!-- Kaart van speler -->
     <div class="player-card">
         <strong>Kaart van speler</strong>
         <div id="playerGrid" class="player-card-grid"></div>
@@ -358,83 +295,11 @@
 </div>
 
 <script>
-// --- Inputs en kaartvak ---
+// --- Basis referenties ---
 const handleInput = document.getElementById("handleInput");
 const roundSelect = document.getElementById("roundSelect");
 const playerGrid  = document.getElementById("playerGrid");
-
-   function getCardNumbersFor(handle, round) {
-    handle = handle.trim();
-    if (!handle) return [];
-    return generateCard(handle, round);   // gebruik dezelfde generator als bij controle
-}
-
-
-
-// Hulpfunctie om kaart te tonen in "Kaart van speler"
-function renderPlayerGrid(numbers) {
-    playerGrid.innerHTML = "";
-    if (!numbers || numbers.length === 0) return;
-
-    numbers.forEach((n) => {
-        const cell = document.createElement("div");
-        cell.className = "cell";   // zelfde stijl als bij controle
-        cell.textContent = n;
-        playerGrid.appendChild(cell);
-    });
-}
-
-
-// Haal kaart op voor huidige handle + ronde
-function updatePlayerCardForCurrentHandle() {
-    const handle = handleInput.value.trim();
-    const round  = parseInt(roundSelect.value, 10);
-
-    if (!handle) {
-        playerGrid.innerHTML = "";
-        return;
-    }
-
-    // 🔴 Deze moet je koppelen aan jouw kaart-generator
-    const numbers = getCardNumbersFor(handle, round);
-
-    renderPlayerGrid(numbers);
-}
-
-// Triggers: handle invullen / enter / ronde wijzigen
-handleInput.addEventListener("change", updatePlayerCardForCurrentHandle);
-handleInput.addEventListener("blur", updatePlayerCardForCurrentHandle);
-handleInput.addEventListener("keyup", (e) => {
-    if (e.key === "Enter") {
-        updatePlayerCardForCurrentHandle();
-    }
-});
-
-roundSelect.addEventListener("change", updatePlayerCardForCurrentHandle);
-
-
-function resetSelections() {
-    // 1. Reset alle geselecteerde nummers
-    const grid = document.getElementById("numGrid");
-    if (grid) {
-        grid.querySelectorAll(".num.selected").forEach(btn => {
-            btn.classList.remove("selected");
-        });
-    }
-
-    // 2. Clear resultaat
-    const result = document.getElementById("result");
-    if (result) {
-        result.textContent = "";
-        result.className = "result";
-    }
-
-    // 3. Leeg getekende kaart
-    const playerGrid = document.getElementById("playerGrid");
-    if (playerGrid) {
-        playerGrid.innerHTML = "";
-    }
-}
+const cardIdInput = document.getElementById("cardId");
 
 /* ---------------- RNG voor vaste kaart per speler ---------------- */
 function cyrb128(str) {
@@ -481,23 +346,60 @@ function generateCardID(handle){
     return "SB-" + String(seed % 1000000).padStart(6,"0");
 }
 
-    function updateCardIdFromHandle() {
-    const handleInput = document.getElementById("handleInput");
-    const cardIdSpan  = document.getElementById("cardId");
-
-    if (!handleInput || !cardIdSpan) return;
-
+// update kaart-ID input
+function updateCardIdFromHandle() {
     const handle = handleInput.value.trim();
     if (!handle) {
-        cardIdSpan.textContent = "–";   // leeg → geen kaart-id
+        cardIdInput.value = "";
         return;
     }
-
-    cardIdSpan.value = generateCardID(handle);
+    cardIdInput.value = generateCardID(handle);
 }
 
+// toon kaart van speler (zonder markeringen)
+function renderPlayerGrid(numbers, marked = []) {
+    playerGrid.innerHTML = "";
+    if (!numbers || numbers.length === 0) return;
 
-/* ---------- Host nummerkeuze ---------- */
+    const markedSet = new Set(marked);
+
+    numbers.forEach((n) => {
+        const cell = document.createElement("div");
+        cell.className = "cell" + (markedSet.has(n) ? " marked" : "");
+        cell.textContent = n;
+        playerGrid.appendChild(cell);
+    });
+}
+
+function updatePlayerCardForCurrentHandle() {
+    const handle = handleInput.value.trim();
+    const round  = parseInt(roundSelect.value, 10);
+    if (!handle) {
+        playerGrid.innerHTML = "";
+        return;
+    }
+    const card = generateCard(handle, round);
+    renderPlayerGrid(card);
+}
+
+// reset-knop
+function resetSelections() {
+    document.querySelectorAll(".num.selected").forEach(btn => {
+        btn.classList.remove("selected");
+    });
+
+    const result = document.getElementById("result");
+    result.textContent = "";
+    result.className = "result";
+
+    const auto = document.getElementById("autoBingoResult");
+    auto.textContent = "";
+    auto.className = "result";
+
+    playerGrid.innerHTML = "";
+}
+
+// nummer-grid opbouwen
 const grid = document.getElementById("numGrid");
 for (let i = 1; i <= 75; i++){
     const d = document.createElement("div");
@@ -508,7 +410,7 @@ for (let i = 1; i <= 75; i++){
 }
 
 /* ---------- Bingo regels ---------- */
-function checkBingo(cardNums, drawnNums, round) {
+function checkBingo(cardNums, drawnNums) {
     const drawn = new Set(drawnNums);
     const rows = [
         cardNums.slice(0, 5),
@@ -519,19 +421,14 @@ function checkBingo(cardNums, drawnNums, round) {
     const countLines = rows.filter(r => r.every(n => drawn.has(n))).length;
     const full = cardNums.every(n => drawn.has(n));
 
-    // Ronde maakt niet meer uit: in elke ronde telt elke bingo
     return { ok: countLines >= 1, lines: countLines, full };
 }
 
-
 /* ---------- Controleknop ---------- */
 document.getElementById("checkBtn").onclick = () => {
-    const handle = document.getElementById("handleInput").value.trim();
-    const round = parseInt(document.getElementById("roundSelect").value, 10);
+    const handle = handleInput.value.trim();
+    const round  = parseInt(roundSelect.value, 10);
     const resultBox = document.getElementById("result");
-    
-    updatePlayerCardForCurrentHandle();
-
 
     if (!handle){
         resultBox.textContent = "Vul een @handle in.";
@@ -539,10 +436,12 @@ document.getElementById("checkBtn").onclick = () => {
         return;
     }
 
-    document.getElementById("cardId").textContent = generateCardID(handle);
+    updateCardIdFromHandle();
 
-    const selected = [...document.querySelectorAll(".num.selected")].map(n => parseInt(n.textContent, 10));
-    if (selected.length === 0){
+    const selectedNumbers = Array.from(document.querySelectorAll(".num.selected"))
+        .map(n => parseInt(n.textContent, 10));
+
+    if (selectedNumbers.length === 0){
         resultBox.textContent = "Selecteer getrokken nummers.";
         resultBox.className = "result fail";
         return;
@@ -550,25 +449,18 @@ document.getElementById("checkBtn").onclick = () => {
 
     const card = generateCard(handle, round);
 
-    /* Render kaart */
-    const pg = document.getElementById("playerGrid");
-    pg.innerHTML = "";
-    card.forEach(n => {
-        const c = document.createElement("div");
-        c.className = "cell" + (selected.includes(n) ? " marked" : "");
-        c.textContent = n;
-        pg.appendChild(c);
-    });
+    // kaart tonen met markeringen
+    renderPlayerGrid(card, selectedNumbers);
 
-    /* Bingo check */
-    const { ok, lines, full } = checkBingo(card, selected, round);
+    // bingo check
+    const { ok, lines, full } = checkBingo(card, selectedNumbers);
 
     if (ok){
         if (full){
             resultBox.textContent = `✅ VOLLE KAART voor ${handle} in ronde ${round}!`;
-        } else if (round === 1){
-            resultBox.textContent = `✅ Bingo! (${lines} lijn)`;
-        } else if (round === 2){
+        } else if (lines === 1){
+            resultBox.textContent = `✅ Bingo! (1 lijn)`;
+        } else {
             resultBox.textContent = `✅ Bingo! (${lines} lijnen)`;
         }
         resultBox.className = "result ok";
@@ -576,30 +468,78 @@ document.getElementById("checkBtn").onclick = () => {
         resultBox.textContent = "❌ Geen geldige bingo.";
         resultBox.className = "result fail";
     }
+
+    // ===== NIEUW: alle kaarten in database checken =====
+    const drawnNumbersForServer = selectedNumbers;
+
+    fetch('check_bingos.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            round: round,
+            drawnNumbers: drawnNumbersForServer
+        })
+    })
+    .then(r => r.json())
+    .then(data => {
+        const box = document.getElementById('autoBingoResult');
+
+        if (data.status !== 'ok') {
+            box.textContent = 'Kon automatische bingos niet ophalen.';
+            box.className = "result fail";
+            return;
+        }
+
+        if (!data.bingos || data.bingos.length === 0) {
+            box.textContent = 'Geen mogelijke bingos op basis van alle kaarten.';
+            box.className = "result";
+            return;
+        }
+
+        let linesText = 'Mogelijke bingos:\n';
+        data.bingos.forEach(b => {
+            let type;
+            if (b.full) {
+                type = 'volle kaart';
+            } else if (b.lines === 1) {
+                type = '1 lijn';
+            } else {
+                type = `${b.lines} lijnen`;
+            }
+            linesText += `${b.handle} (${b.cardId}) – ${type}\n`;
+        });
+
+        box.textContent = linesText;
+        box.className = "result ok";
+    })
+    .catch(err => {
+        console.error(err);
+        const box = document.getElementById('autoBingoResult');
+        box.textContent = 'Fout bij automatische bingos.';
+        box.className = "result fail";
+    });
 };
 
-/* --- Reset-knop activeren --- */
+/* --- Reset-knop --- */
 document.getElementById("resetBtn").onclick = () => {
     resetSelections();
 };
 
-/* --- Automatisch resetten bij veranderen van ronde --- */
-document.getElementById("roundSelect").addEventListener("change", () => {
+/* --- Veranderen van ronde: kaart en selectie resetten --- */
+roundSelect.addEventListener("change", () => {
     resetSelections();
+    updatePlayerCardForCurrentHandle();
 });
 
-// Kaart-ID én kaart van speler meteen updaten terwijl je typt
-document.getElementById("handleInput").addEventListener("input", () => {
+// handle-veld: live kaart-id en kaart tonen
+handleInput.addEventListener("input", () => {
     updateCardIdFromHandle();
     updatePlayerCardForCurrentHandle();
 });
 
-// Bij laden alvast leeg/vooraf ingevuld goedzetten
+// init
 updateCardIdFromHandle();
 updatePlayerCardForCurrentHandle();
-
-
-    
 </script>
 
 </body>
