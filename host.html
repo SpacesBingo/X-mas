@@ -511,18 +511,18 @@ for (let i = 1; i <= 75; i++){
 function checkBingo(cardNums, drawnNums, round) {
     const drawn = new Set(drawnNums);
     const rows = [
-        cardNums.slice(0,5),
-        cardNums.slice(5,10),
-        cardNums.slice(10,15)
+        cardNums.slice(0, 5),
+        cardNums.slice(5, 10),
+        cardNums.slice(10, 15)
     ];
 
     const countLines = rows.filter(r => r.every(n => drawn.has(n))).length;
     const full = cardNums.every(n => drawn.has(n));
 
-    if (round === 1) return { ok: countLines >= 1, lines: countLines, full };
-    if (round === 2) return { ok: countLines >= 2, lines: countLines, full };
-    if (round === 3) return { ok: full, lines: countLines, full };
+    // Ronde maakt niet meer uit: in elke ronde telt elke bingo
+    return { ok: countLines >= 1, lines: countLines, full };
 }
+
 
 /* ---------- Controleknop ---------- */
 document.getElementById("checkBtn").onclick = () => {
