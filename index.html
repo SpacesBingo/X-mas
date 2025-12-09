@@ -384,6 +384,38 @@ function restorePlayerMarks(handle, cardId, round) {
             console.error('Loggen van deelnemer mislukt:', err);
         });
     })();
+
+
+
+/* ---------------- Opslaan / herstel aangeklikte vakjes (localStorage) ---------------- */
+
+function getPlayerStorageKey(handle, cardId, round) {
+    return `playerMarks_${handle}_${cardId}_R${round}`;
+}
+
+function savePlayerMarks(handle, cardId, round) {
+    const key = getPlayerStorageKey(handle, cardId, round);
+    const selectedCells = Array.from(document.querySelectorAll('.cell.marked'));
+    const numbers = selectedCells.map(c => parseInt(c.dataset.number, 10));
+    localStorage.setItem(key, JSON.stringify(numbers));
+}
+
+function restorePlayerMarks(handle, cardId, round) {
+    const key = getPlayerStorageKey(handle, cardId, round);
+    const saved = localStorage.getItem(key);
+    if (!saved) return;
+
+    const nums = JSON.parse(saved);
+    const cells = document.querySelectorAll('.cell');
+    cells.forEach(c => {
+        const n = parseInt(c.dataset.number, 10);
+        if (nums.includes(n)) {
+            c.classList.add('marked');
+        }
+    });
+}
+
+      
     // ===== EINDE nieuw blok =====      
 
       document.getElementById("card-section").style.display = "block";
