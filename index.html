@@ -428,32 +428,44 @@ function restorePlayerMarks(handle, cardId, round) {
         now.toLocaleDateString("nl-NL") + " " +
         now.toLocaleTimeString("nl-NL", {hour:"2-digit", minute:"2-digit"});
 
-      for (let r = 1; r <= 3; r++) {
-        const nums = generateNumbers(handle, r);
-        const grid = document.getElementById("round" + r);
-        grid.innerHTML = "";
-        nums.forEach(n => {
-          const cell = document.createElement("div");
-cell.className = "cell";
-cell.textContent = number;
-cell.dataset.number = number;
+     const now = new Date();
+document.getElementById("gen-time").textContent =
+    now.toLocaleDateString("nl-NL") + " " +
+    now.toLocaleTimeString("nl-NL", {hour:"2-digit", minute:"2-digit"});
 
-cell.onclick = () => {
-    cell.classList.toggle("marked");
+for (let r = 1; r <= 3; r++) {
+    const nums = generateNumbers(handle, r);
+    const grid = document.getElementById("round" + r);
+    grid.innerHTML = "";
 
+    nums.forEach(n => {
+        const cell = document.createElement("div");
+        cell.className = "cell";
+        cell.textContent = n;
+        cell.dataset.number = n;
+
+        // --- klik: markeren en opslaan in localStorage ---
+        cell.onclick = () => {
+            cell.classList.toggle("marked");
+
+            const handle = document.getElementById("username").value.trim();
+            const cardId = generateCardId(handle);
+            const round = r;   // heel belangrijk: juiste ronde vastzetten
+
+            if (handle && cardId) {
+                savePlayerMarks(handle, cardId, round);
+            }
+        };
+
+        grid.appendChild(cell);
+    });
+
+    // --- Herstel opgeslagen markeringen voor deze ronde ---
     const handle = document.getElementById("username").value.trim();
-    const cardId = generateCardId(handle);      // zelfde als je op de pagina toont
-    const round  = currentRound;                // 1, 2 of 3 (afhankelijk van welk blok je toont)
+    const cardId = generateCardId(handle);
+    restorePlayerMarks(handle, cardId, r);
+}
 
-    if (handle && cardId) {
-        savePlayerMarks(handle, cardId, round);
-    }
-};
-
-          grid.appendChild(cell);
-        });
-      }
-    }
   </script>
 
 </body>
