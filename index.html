@@ -402,11 +402,22 @@ function restorePlayerMarks(handle, cardId, round) {
         grid.innerHTML = "";
         nums.forEach(n => {
           const cell = document.createElement("div");
-          cell.className = "cell";
-          cell.textContent = n;
-          cell.addEventListener("click", () => {
-            cell.classList.toggle("marked");
-          });
+cell.className = "cell";
+cell.textContent = number;
+cell.dataset.number = number;
+
+cell.onclick = () => {
+    cell.classList.toggle("marked");
+
+    const handle = document.getElementById("username").value.trim();
+    const cardId = generateCardId(handle);      // zelfde als je op de pagina toont
+    const round  = currentRound;                // 1, 2 of 3 (afhankelijk van welk blok je toont)
+
+    if (handle && cardId) {
+        savePlayerMarks(handle, cardId, round);
+    }
+};
+
           grid.appendChild(cell);
         });
       }
