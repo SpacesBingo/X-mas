@@ -278,6 +278,32 @@
   </div>
 
   <script>
+
+function getPlayerStorageKey(handle, cardId, round) {
+    return `playerMarks_${handle}_${cardId}_R${round}`;
+}
+
+function savePlayerMarks(handle, cardId, round) {
+    const key = getPlayerStorageKey(handle, cardId, round);
+    const selectedCells = Array.from(document.querySelectorAll('.cell.marked'));
+    const numbers = selectedCells.map(c => parseInt(c.dataset.number, 10));
+    localStorage.setItem(key, JSON.stringify(numbers));
+}
+
+function restorePlayerMarks(handle, cardId, round) {
+    const key = getPlayerStorageKey(handle, cardId, round);
+    const saved = localStorage.getItem(key);
+    if (!saved) return;
+
+    const numbers = JSON.parse(saved);
+    const allCells = Array.from(document.querySelectorAll('.cell'));
+    allCells.forEach(c => {
+        const n = parseInt(c.dataset.number, 10);
+        if (numbers.includes(n)) {
+            c.classList.add('marked');
+        }
+    });
+    
     // Deterministische RNG
     function cyrb128(str) {
       let h1 = 1779033703, h2 = 3144134277,
