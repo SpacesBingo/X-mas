@@ -336,6 +336,30 @@
         return;
       }
 
+    // ===== NIEUW: deelnemer + kaart loggen in database =====
+    (function () {
+        // Zelfde kaartnummers als op het scherm, maar dan voor de database
+        const cardIdForLog = generateCardId(handle);
+        const round1Nums   = generateNumbers(handle, 1);
+        const round2Nums   = generateNumbers(handle, 2);
+        const round3Nums   = generateNumbers(handle, 3);
+
+        fetch('log_participant.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                handle: handle,                     // ingevulde @handle
+                cardId: cardIdForLog,              // SB-nummer
+                round1: round1Nums.join(','),      // "2,8,10,15,..."
+                round2: round2Nums.join(','),
+                round3: round3Nums.join(',')
+            })
+        }).catch(err => {
+            console.error('Loggen van deelnemer mislukt:', err);
+        });
+    })();
+    // ===== EINDE nieuw blok =====      
+
       document.getElementById("card-section").style.display = "block";
       document.getElementById("card-owner").textContent = "Kaart voor: " + handle;
 
