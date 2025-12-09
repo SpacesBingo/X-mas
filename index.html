@@ -200,7 +200,6 @@
       color: #fff;
     }
 
-    /* Desktop: 3 rondes naast elkaar */
     @media (min-width: 900px) {
       .rounds-wrapper {
         flex-direction: row;
@@ -210,7 +209,6 @@
       }
     }
 
-    /* Mobiel: QR verbergen, header stapelen */
     @media (max-width: 768px) {
       .header-row {
         flex-direction: column;
@@ -278,194 +276,156 @@
   </div>
 
   <script>
+  // ---------- Deterministische RNG ----------
+  function cyrb128(str) {
+    let h1 = 1779033703, h2 = 3144134277,
+        h3 = 1013904242, h4 = 2773480762;
+    for (let i = 0, k; i < str.length; i++) {
+      k = str.charCodeAt(i);
+      h1 = h2 ^ Math.imul(h1 ^ k, 597399067);
+      h2 = h3 ^ Math.imul(h2 ^ k, 2869860233);
+      h3 = h4 ^ Math.imul(h3 ^ k, 951274213);
+      h4 = h1 ^ Math.imul(h4 ^ k, 2716044179);
+    }
+    h1 = Math.imul(h3 ^ (h1 >>> 18), 597399067);
+    h2 = Math.imul(h4 ^ (h2 >>> 22), 2869860233);
+    h3 = Math.imul(h1 ^ (h3 >>> 17), 951274213);
+    h4 = Math.imul(h2 ^ (h4 >>> 19), 2716044179);
+    return [(h1 ^ h2 ^ h3 ^ h4) >>> 0];
+  }
 
-function getPlayerStorageKey(handle, cardId, round) {
+  function makeRng(seed) {
+    return function() {
+      seed |= 0; seed = (seed + 0x6D2B79F5) | 0;
+      let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+      t = (t + Math.imul(t ^ t >>> 7, 61 | t)) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    }
+  }
+
+  function generateNumbers(handle, roundIndex) {
+    handle = handle.replace("@", "").toLowerCase();
+    const [seed] = cyrb128(handle + "::" + roundIndex);
+    const rng = makeRng(seed);
+
+    const all = [...Array(75).keys()].map(n => n + 1);
+    for (let i = all.length - 1; i > 0; i--) {
+      const j = Math.floor(rng() * (i + 1));
+      [all[i], all[j]] = [all[j], all[i]];
+    }
+    return all.slice(0, 15).sort((a,b)=>a-b);
+  }
+
+  function generateCardId(handle) {
+    const base = handle.trim().toLowerCase();
+    const [seed] = cyrb128(base + "::card");
+    return "SB-" + String(seed % 1000000).padStart(6, "0");
+  }
+
+  // ---------- localStorage helpers ----------
+  function getPlayerStorageKey(handle, cardId, round) {
     return `playerMarks_${handle}_${cardId}_R${round}`;
-}
+  }
 
-function savePlayerMarks(handle, cardId, round) {
+  function savePlayerMarks(handle, cardId, round) {
     const key = getPlayerStorageKey(handle, cardId, round);
-    const selectedCells = Array.from(document.querySelectorAll('.cell.marked'));
+    const selector = `.cell.marked[data-round="${round}"]`;
+    const selectedCells = Array.from(document.querySelectorAll(selector));
     const numbers = selectedCells.map(c => parseInt(c.dataset.number, 10));
     localStorage.setItem(key, JSON.stringify(numbers));
-}
+  }
 
-function restorePlayerMarks(handle, cardId, round) {
+  function restorePlayerMarks(handle, cardId, round) {
     const key = getPlayerStorageKey(handle, cardId, round);
     const saved = localStorage.getItem(key);
     if (!saved) return;
 
     const numbers = JSON.parse(saved);
-    const allCells = Array.from(document.querySelectorAll('.cell'));
-    allCells.forEach(c => {
-        const n = parseInt(c.dataset.number, 10);
-        if (numbers.includes(n)) {
-            c.classList.add('marked');
-        }
-    });
-    
-    // Deterministische RNG
-    function cyrb128(str) {
-      let h1 = 1779033703, h2 = 3144134277,
-          h3 = 1013904242, h4 = 2773480762;
-      for (let i = 0, k; i < str.length; i++) {
-        k = str.charCodeAt(i);
-        h1 = h2 ^ Math.imul(h1 ^ k, 597399067);
-        h2 = h3 ^ Math.imul(h2 ^ k, 2869860233);
-        h3 = h4 ^ Math.imul(h3 ^ k, 951274213);
-        h4 = h1 ^ Math.imul(h4 ^ k, 2716044179);
-      }
-      h1 = Math.imul(h3 ^ (h1 >>> 18), 597399067);
-      h2 = Math.imul(h4 ^ (h2 >>> 22), 2869860233);
-      h3 = Math.imul(h1 ^ (h3 >>> 17), 951274213);
-      h4 = Math.imul(h2 ^ (h4 >>> 19), 2716044179);
-      return [(h1 ^ h2 ^ h3 ^ h4) >>> 0];
-    }
-
-    function makeRng(seed) {
-      return function() {
-        seed |= 0; seed = (seed + 0x6D2B79F5) | 0;
-        let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
-        t = (t + Math.imul(t ^ t >>> 7, 61 | t)) ^ t;
-        return ((t ^ t >>> 14) >>> 0) / 4294967296;
-      }
-    }
-
-    function generateNumbers(handle, roundIndex) {
-      handle = handle.replace("@", "").toLowerCase();
-      const [seed] = cyrb128(handle + "::" + roundIndex);
-      const rng = makeRng(seed);
-
-      const all = [...Array(75).keys()].map(n => n + 1);
-      for (let i = all.length - 1; i > 0; i--) {
-        const j = Math.floor(rng() * (i + 1));
-        [all[i], all[j]] = [all[j], all[i]];
-      }
-      return all.slice(0, 15).sort((a,b)=>a-b);
-    }
-
-    function generateCardId(handle) {
-      const base = handle.trim().toLowerCase();
-      const [seed] = cyrb128(base + "::card");
-      return "SB-" + String(seed % 1000000).padStart(6, "0");
-    }
-
-    function generateCard() {
-      let handle = document.getElementById("username").value.trim();
-
-      if (!handle) {
-        alert("Vul je X @handle in.");
-        return;
-      }
-      if (!handle.startsWith("@")) {
-        alert("Een X-handle moet beginnen met @");
-        return;
-      }
-
-    // ===== NIEUW: deelnemer + kaart loggen in database =====
-    (function () {
-        // Zelfde kaartnummers als op het scherm, maar dan voor de database
-        const cardIdForLog = generateCardId(handle);
-        const round1Nums   = generateNumbers(handle, 1);
-        const round2Nums   = generateNumbers(handle, 2);
-        const round3Nums   = generateNumbers(handle, 3);
-
-        fetch('log_participant.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                handle: handle,                     // ingevulde @handle
-                cardId: cardIdForLog,              // SB-nummer
-                round1: round1Nums.join(','),      // "2,8,10,15,..."
-                round2: round2Nums.join(','),
-                round3: round3Nums.join(',')
-            })
-        }).catch(err => {
-            console.error('Loggen van deelnemer mislukt:', err);
-        });
-    })();
-
-
-
-/* ---------------- Opslaan / herstel aangeklikte vakjes (localStorage) ---------------- */
-
-function getPlayerStorageKey(handle, cardId, round) {
-    return `playerMarks_${handle}_${cardId}_R${round}`;
-}
-
-function savePlayerMarks(handle, cardId, round) {
-    const key = getPlayerStorageKey(handle, cardId, round);
-    const selectedCells = Array.from(document.querySelectorAll('.cell.marked'));
-    const numbers = selectedCells.map(c => parseInt(c.dataset.number, 10));
-    localStorage.setItem(key, JSON.stringify(numbers));
-}
-
-function restorePlayerMarks(handle, cardId, round) {
-    const key = getPlayerStorageKey(handle, cardId, round);
-    const saved = localStorage.getItem(key);
-    if (!saved) return;
-
-    const nums = JSON.parse(saved);
-    const cells = document.querySelectorAll('.cell');
+    const cells = document.querySelectorAll(`.cell[data-round="${round}"]`);
     cells.forEach(c => {
-        const n = parseInt(c.dataset.number, 10);
-        if (nums.includes(n)) {
-            c.classList.add('marked');
-        }
+      const n = parseInt(c.dataset.number, 10);
+      if (numbers.includes(n)) {
+        c.classList.add("marked");
+      }
     });
-}
+  }
 
-      
-    // ===== EINDE nieuw blok =====      
+  // ---------- hoofd-functie ----------
+  function generateCard() {
+    let handle = document.getElementById("username").value.trim();
 
-      document.getElementById("card-section").style.display = "block";
-      document.getElementById("card-owner").textContent = "Kaart voor: " + handle;
+    if (!handle) {
+      alert("Vul je X @handle in.");
+      return;
+    }
+    if (!handle.startsWith("@")) {
+      alert("Een X-handle moet beginnen met @");
+      return;
+    }
 
-      document.getElementById("cardIdSingle").textContent = generateCardId(handle);
+    const cardId = generateCardId(handle);
 
-      const now = new Date();
-      document.getElementById("gen-time").textContent =
-        now.toLocaleDateString("nl-NL") + " " +
-        now.toLocaleTimeString("nl-NL", {hour:"2-digit", minute:"2-digit"});
+    // kaart zichtbaar maken + teksten zetten
+    document.getElementById("card-section").style.display = "block";
+    document.getElementById("card-owner").textContent = "Kaart voor: " + handle;
+    document.getElementById("cardIdSingle").textContent = cardId;
 
-     const now = new Date();
-document.getElementById("gen-time").textContent =
-    now.toLocaleDateString("nl-NL") + " " +
-    now.toLocaleTimeString("nl-NL", {hour:"2-digit", minute:"2-digit"});
+    const now = new Date();
+    document.getElementById("gen-time").textContent =
+      now.toLocaleDateString("nl-NL") + " " +
+      now.toLocaleTimeString("nl-NL", {hour:"2-digit", minute:"2-digit"});
 
-for (let r = 1; r <= 3; r++) {
-    const nums = generateNumbers(handle, r);
-    const grid = document.getElementById("round" + r);
-    grid.innerHTML = "";
+    // ===== Log deelnemer + kaart in database =====
+    (function () {
+      const round1Nums = generateNumbers(handle, 1);
+      const round2Nums = generateNumbers(handle, 2);
+      const round3Nums = generateNumbers(handle, 3);
 
-    nums.forEach(n => {
+      fetch('log_participant.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          handle: handle,
+          cardId: cardId,
+          round1: round1Nums.join(','),
+          round2: round2Nums.join(','),
+          round3: round3Nums.join(',')
+        })
+      }).catch(err => {
+        console.error('Loggen van deelnemer mislukt:', err);
+      });
+    })();
+    // ===== EINDE logging =====
+
+    // 3 rondes tekenen + opgeslagen markeringen herstellen
+    for (let r = 1; r <= 3; r++) {
+      const nums = generateNumbers(handle, r);
+      const grid = document.getElementById("round" + r);
+      grid.innerHTML = "";
+
+      nums.forEach(n => {
         const cell = document.createElement("div");
         cell.className = "cell";
         cell.textContent = n;
         cell.dataset.number = n;
+        cell.dataset.round = r;
 
-        // --- klik: markeren en opslaan in localStorage ---
         cell.onclick = () => {
-            cell.classList.toggle("marked");
-
-            const handle = document.getElementById("username").value.trim();
-            const cardId = generateCardId(handle);
-            const round = r;   // heel belangrijk: juiste ronde vastzetten
-
-            if (handle && cardId) {
-                savePlayerMarks(handle, cardId, round);
-            }
+          cell.classList.toggle("marked");
+          const h = document.getElementById("username").value.trim();
+          const cId = generateCardId(h);
+          if (h && cId) {
+            savePlayerMarks(h, cId, r);
+          }
         };
 
         grid.appendChild(cell);
-    });
+      });
 
-    // --- Herstel opgeslagen markeringen voor deze ronde ---
-    const handle = document.getElementById("username").value.trim();
-    const cardId = generateCardId(handle);
-    restorePlayerMarks(handle, cardId, r);
-}
-
+      // herstel eerder aangeklikte nummers voor deze ronde
+      restorePlayerMarks(handle, cardId, r);
+    }
+  }
   </script>
 
 </body>
